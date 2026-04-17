@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Notifications — UniTrade</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/ut.css">
+<style>
+/* ── NOTIFICATIONS-SPECIFIC ── */
+.main-wrap{max-width:100vw;margin:0;padding:24px 20px 60px;flex:1;}
+
+.notif-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:12px;}
+.notif-title{font-family:var(--font-d);font-size:2rem;font-weight:700;color:var(--text);}
+.notif-hdr-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-start;width:100%;}
+
+.live-pill{display:none;align-items:center;gap:5px;background:#f0fdf4;border:1px solid rgba(34,197,94,.3);border-radius:20px;padding:4px 10px;font-size:.68rem;font-weight:700;color:#166534;letter-spacing:.06em;text-transform:uppercase;}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;animation:livepulse 2s infinite;}
+@keyframes livepulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+
+.mark-btn{background:none;border:1px solid var(--border,#e2e8f0);border-radius:var(--r,8px);padding:7px 14px;font-family:var(--font-b);font-size:.76rem;font-weight:600;color:var(--text-s,#555);cursor:pointer;transition:all .2s;white-space:nowrap;}
+.mark-btn:hover{background:#f0f0f0;color:var(--primary,#007bff);}
+
+.unread-count{font-size:.75rem;color:var(--text-m,#9ca3af);font-weight:600;margin-bottom:12px;display:none;}
+
+.banner{border-radius:var(--r-lg,12px);padding:12px 16px;margin-bottom:18px;font-size:.82rem;display:none;align-items:center;gap:10px;}
+.banner-warn{background:#fffbeb;border:1px solid #fcd34d;color:#92400e;}
+.banner-warn a{color:var(--primary,#007bff);font-weight:700;}
+.banner-info{background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af;}
+
+.notif-card{background:#fff;border:1px solid var(--border,#e2e8f0);border-radius:var(--r-xl,18px);overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.04);}
+.notif-item{display:flex;align-items:flex-start;gap:14px;padding:16px 20px;border-bottom:1px solid var(--border,#e2e8f0);cursor:pointer;transition:background .15s;text-decoration:none;color:inherit;}
+.notif-item:last-child{border-bottom:none;}
+.notif-item:hover{background:#f8f9fa;}
+.notif-item.unread{background:#f0f7ff;}
+.notif-item.unread:hover{background:#e8f2ff;}
+.notif-item.new-in{animation:ndrop .35s ease both;}
+@keyframes ndrop{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
+
+.ni-icon{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.15rem;}
+.ni-like{background:#fef2f2;}
+.ni-comment,.ni-reply{background:#eff6ff;}
+.ni-sale{background:#f0fdf4;}
+.ni-system{background:#fefce8;}
+
+.ni-body{flex:1;min-width:0;}
+.ni-text{font-size:.875rem;color:var(--text,#1a1a2e);line-height:1.45;}
+.ni-text strong{font-weight:700;}
+.ni-time{font-size:.7rem;color:var(--text-m,#9ca3af);margin-top:4px;}
+.ni-action{font-size:.72rem;color:var(--primary,#007bff);margin-top:5px;display:inline-block;font-weight:700;}
+.ni-dot{width:8px;height:8px;border-radius:50%;background:var(--primary,#007bff);flex-shrink:0;margin-top:8px;}
+
+.empty-state{text-align:center;padding:80px 20px;}
+.empty-icon{width:76px;height:76px;border-radius:50%;background:#eff6ff;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;}
+.empty-state h3{font-family:var(--font-d);font-size:1.5rem;font-weight:600;margin-bottom:8px;}
+.empty-state p{color:var(--text-s,#555);font-size:.875rem;max-width:300px;margin:0 auto;}
+
+@media(max-width:768px){
+  .main-wrap{padding:24px 14px 48px;}
+  .notif-title{font-size:1.6rem;}
+}
+@media(max-width:480px){
+  .main-wrap{padding:20px 12px 40px;}
+  .notif-title{font-size:1.5rem;}
+  .notif-item{padding:14px 16px;gap:12px;}
+  .ni-icon{width:40px;height:40px;font-size:1rem;}
+  .ni-text{font-size:.82rem;}
+  .ni-time{font-size:.68rem;}
+  .ni-action{font-size:.7rem;}
+}
+</style>
+<script src="../js/config.js"></script>
+<script src="../js/utils.js"></script>
+<script src="../js/navbar.js"></script>
+</head>
+<body>
+<script>document.addEventListener('DOMContentLoaded',()=>renderNavbar('notifications',{showLogin:false}));</script>
+
+<main class="main-wrap">
+
+  <div class="notif-hdr">
+    <h1 class="notif-title">Notifications</h1>
+    <div class="notif-hdr-right">
+      <div class="live-pill" id="livePill"><div class="live-dot"></div>Live</div>
+      <button class="mark-btn" onclick="markAllRead()">Mark all read</button>
+    </div>
+  </div>
+
+  <div class="banner banner-info" id="demoBanner">
+    ⚡ Server offline — showing demo data. Start the server for live notifications.
+  </div>
+  <div class="banner banner-warn" id="guestBanner">
+    ⚠️ <a href="login.html">Sign in</a> to see your personal notifications.
+  </div>
+
+  <div class="unread-count" id="unreadCount"></div>
+  <div id="notifContainer">
+    <div class="notif-card" style="padding:40px;text-align:center;color:var(--text-m);font-size:.85rem;">Loading…</div>
+  </div>
+
+</main>
+
+<footer class="ut-footer">
+  <div class="ut-footer-inner">
+    <div class="ut-footer-brand">
+      <a href="index.html" class="ft-logo">
+        <div class="ft-logo-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+        <span class="ft-logo-name">Uni<span>Trade</span></span>
+      </a>
+      <p>The campus marketplace for LUANAR students. Buy, sell and connect safely on campus.</p>
+      <div class="ft-social">
+        <a href="#" title="Facebook"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+        <a href="#" title="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+        <a href="mailto:sammymisanjo@gmail.com" title="Email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></a>
+      </div>
+    </div>
+    <div class="ut-footer-col">
+      <h5>Help</h5>
+      <a href="about.html">About Us</a>
+      <a href="feedback.html">Feedback</a>
+    </div>
+    <div class="ut-footer-col">
+      <h5>Account</h5>
+      <a href="login.html">Sign In</a>
+      <a href="register.html">Create Account</a>
+    </div>
+    <div class="ut-footer-col">
+      <h5>Legal</h5>
+      <a href="terms.html">Terms &amp; Conditions</a>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="safety.html">Safety Guidelines</a>
+    </div>
+  </div>
+  <div class="ut-footer-bottom">
+    <span>&copy; 2026 UniTrade &mdash; Built for students.</span>
+    <span><a href="terms.html">Terms</a> &nbsp;&middot;&nbsp; <a href="privacy.html">Privacy</a></span>
+  </div>
+</footer>
+
+<div id="toastWrap"></div>
+
+<script src="config.js"></script>
+<script>
+
+let seenIds = new Set();
+
+function getToken(){ return localStorage.getItem('token')||''; }
+function authH(){ return {'Content-Type':'application/json','Authorization':'Bearer '+getToken()}; }
+
+function showToast(msg,t='info'){
+  const w=document.getElementById('toastWrap');
+  const el=document.createElement('div');
+  el.className='toast '+t; el.textContent=msg;
+  w.appendChild(el); setTimeout(()=>el.remove(),3200);
+}
+
+function ago(iso){
+  if(!iso)return'';
+  const m=Math.floor((Date.now()-new Date(iso))/60000);
+  if(m<1)return'just now'; if(m<60)return m+'m ago';
+  const h=Math.floor(m/60); if(h<24)return h+'h ago';
+  const d=Math.floor(h/24); return d<30?d+'d ago':new Date(iso).toLocaleDateString();
+}
+
+const CFG={
+  like:   {cls:'ni-like',    icon:'👍', label:'View listing'},
+  comment:{cls:'ni-comment', icon:'💬', label:'See comment' },
+  reply:  {cls:'ni-reply',   icon:'↩️', label:'See reply'   },
+  sale:   {cls:'ni-sale',    icon:'🛍️', label:'View listing'},
+  system: {cls:'ni-system',  icon:'🔔', label:''            },
+};
+
+const MOCK=[
+  {id:1,type:'like',   read:false,text:'<strong>Amara T.</strong> liked your listing <em>MacBook Pro 2021</em>.',      link:'#',createdAt:new Date(Date.now()-5*60000).toISOString()},
+  {id:2,type:'comment',read:false,text:'<strong>Liam K.</strong> commented: "Is this still available?"',              link:'#',createdAt:new Date(Date.now()-22*60000).toISOString()},
+  {id:3,type:'sale',   read:false,text:'Your listing <em>Biology Textbook 4th Ed</em> was marked as sold. 🎉',         link:'#',createdAt:new Date(Date.now()-2*3600000).toISOString()},
+  {id:4,type:'reply',  read:true, text:'<strong>Priya M.</strong> replied to your comment on <em>Desk Lamp</em>.',    link:'#',createdAt:new Date(Date.now()-5*3600000).toISOString()},
+  {id:5,type:'system', read:true, text:'Welcome to UniTrade! Complete your profile to start selling.',                  link:'#',createdAt:new Date(Date.now()-2*86400000).toISOString()},
+];
+
+function renderNotifs(list,isUpdate){
+  const container=document.getElementById('notifContainer');
+  const countEl=document.getElementById('unreadCount');
+  const unread=list.filter(n=>!n.read).length;
+
+  if(unread>0){countEl.textContent=unread+' unread notification'+(unread===1?'':'s');countEl.style.display='block';}
+  else{countEl.style.display='none';}
+
+  if(list.length===0){
+    container.innerHTML=`<div class="notif-card"><div class="empty-state"><div class="empty-icon"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#007bff" stroke-width="1.5"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div><h3>You're all caught up!</h3><p>Notifications appear here when someone likes, comments, or replies to your listings.</p></div></div>`;
+    return;
+  }
+
+  const newItems=new Set(list.filter(n=>!seenIds.has(n.id)).map(n=>n.id));
+  list.forEach(n=>seenIds.add(n.id));
+
+  container.innerHTML=`<div class="notif-card">${list.map(n=>{
+    const c=CFG[n.type]||CFG.system;
+    const href=n.link||'#';
+    const isN=isUpdate&&newItems.has(n.id);
+    return`<a href="${href}" class="notif-item${n.read?'':' unread'}${isN?' new-in':''}" onclick="tap(event,${n.id},'${href}')">
+      <div class="ni-icon ${c.cls}">${c.icon}</div>
+      <div class="ni-body">
+        <div class="ni-text">${n.text}</div>
+        <div class="ni-time">${ago(n.createdAt)}</div>
+        ${c.label?`<span class="ni-action">${c.label} →</span>`:''}
+      </div>
+      ${!n.read?'<div class="ni-dot"></div>':''}
+    </a>`;
+  }).join('')}</div>`;
+}
+
+async function tap(e,id,href){
+  e.preventDefault();
+  document.querySelectorAll('.notif-item').forEach(el=>{
+    if(el.getAttribute('onclick')&&el.getAttribute('onclick').includes(','+id+',')){
+      el.classList.remove('unread'); el.querySelector('.ni-dot')?.remove();
+    }
+  });
+  try{await fetch(API+'/notifications/'+id+'/read',{method:'PUT',headers:authH()});}catch{}
+  if(href&&href!=='#')window.location.href=href;
+}
+
+async function markAllRead(){
+  document.querySelectorAll('.notif-item.unread').forEach(el=>{
+    el.classList.remove('unread'); el.querySelector('.ni-dot')?.remove();
+  });
+  document.getElementById('unreadCount').style.display='none';
+  try{await fetch(API+'/notifications/read-all',{method:'PUT',headers:authH()});}catch{}
+  showToast('All marked as read ✓','success');
+}
+
+async function load(isUpdate){
+  if(!getToken()){
+    document.getElementById('guestBanner').style.display='flex';
+    document.getElementById('demoBanner').style.display='flex';
+    renderNotifs(MOCK,false);
+    return;
+  }
+  try{
+    const res=await fetch(API+'/notifications',{headers:authH()});
+    if(!res.ok)throw new Error();
+    const notifs=await res.json();
+    if(isUpdate){
+      const fresh=notifs.filter(n=>!seenIds.has(n.id)&&!n.read);
+      if(fresh.length&&Notification.permission==='granted')
+        new Notification('UniTrade — '+fresh.length+' new notification'+(fresh.length>1?'s':''),{body:fresh[0].text.replace(/<[^>]+>/g,'')});
+    }
+    document.getElementById('demoBanner').style.display='none';
+    renderNotifs(notifs,isUpdate);
+  }catch{
+    if(!isUpdate){document.getElementById('demoBanner').style.display='flex';renderNotifs(MOCK,false);}
+  }
+}
+
+load(false);
+if(getToken()){
+  document.getElementById('livePill').style.display='flex';
+  setInterval(()=>load(true),15000);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)load(true);});
+  if('Notification' in window&&Notification.permission==='default')Notification.requestPermission();
+}
+</script>
+</body>
+</html>

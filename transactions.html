@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Transactions — UniTrade</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/ut.css">
+<script src="../js/config.js"></script>
+<script src="../js/utils.js"></script>
+<script src="../js/navbar.js"></script>
+<style>
+:root{--primary:#007bff;--primary-dark:#0056b3;--primary-dim:rgba(0,123,255,.08);--secondary:#28a745;--danger:#dc2626;--warning:#f59e0b;--bg:#f4f6f9;--bg-card:#fff;--bg-muted:#f8f9fa;--border:#e2e8f0;--text:#1a1a2e;--text-2:#555770;--text-m:#9ca3af;--r:8px;--r-lg:12px;--r-xl:18px;--font-d:'Cormorant Garamond',Georgia,serif;--font-b:'Syne',system-ui,sans-serif;}
+body{background:var(--bg);font-family:var(--font-b);color:var(--text);}
+.main{max-width:1100px;margin:0 auto;padding:32px 20px 80px;}
+.page-hero{margin-bottom:28px;}
+.page-title{font-family:var(--font-d);font-size:2.1rem;font-weight:600;}
+.page-sub{font-size:.85rem;color:var(--text-2);margin-top:4px;}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px;}
+.stat-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px 18px;}
+.stat-label{font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-m);margin-bottom:6px;}
+.stat-value{font-family:var(--font-d);font-size:1.8rem;font-weight:700;}
+.stat-value.blue{color:var(--primary);}
+.stat-value.green{color:#16a34a;}
+.stat-value.amber{color:#d97706;}
+.stat-value.red{color:var(--danger);}
+.tab-bar{display:flex;gap:4px;border-bottom:2px solid var(--border);margin-bottom:24px;overflow-x:auto;scrollbar-width:none;}
+.tab-bar::-webkit-scrollbar{display:none;}
+.tab-btn{padding:8px 16px;border:none;background:none;font-family:var(--font-b);font-size:.8rem;font-weight:600;color:var(--text-2);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:color .2s,border-color .2s;white-space:nowrap;flex-shrink:0;}
+.tab-btn.active{color:var(--primary);border-bottom-color:var(--primary);}
+.create-card{background:linear-gradient(135deg,#eff6ff,#dbeafe);border:1px solid rgba(0,123,255,.2);border-radius:var(--r-xl);padding:24px;margin-bottom:28px;display:flex;align-items:flex-start;gap:18px;}
+.create-icon{width:48px;height:48px;background:var(--primary);border-radius:var(--r-lg);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.create-body h3{font-family:var(--font-d);font-size:1.2rem;font-weight:600;margin-bottom:4px;}
+.create-body p{font-size:.82rem;color:var(--text-2);line-height:1.6;}
+.create-actions{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;}
+.txn-list{display:flex;flex-direction:column;gap:12px;}
+.txn-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-xl);padding:20px 22px;transition:box-shadow .2s;position:relative;}
+.txn-card:hover{box-shadow:0 4px 20px rgba(0,0,0,.07);}
+.txn-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap;}
+.txn-ticket{font-family:monospace;font-size:.82rem;font-weight:700;color:var(--primary);background:var(--primary-dim);padding:4px 10px;border-radius:6px;letter-spacing:.06em;}
+.txn-status{padding:4px 12px;border-radius:20px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;flex-shrink:0;}
+.status-pending{background:#fef3c7;color:#92400e;border:1px solid #fcd34d;}
+.status-confirmed{background:#dbeafe;color:#1e40af;border:1px solid #93c5fd;}
+.status-completed{background:#dcfce7;color:#166534;border:1px solid #86efac;}
+.status-disputed{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5;}
+.status-cancelled{background:#f3f4f6;color:#374151;border:1px solid #d1d5db;}
+.txn-body{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px;}
+.txn-field .field-label{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-m);margin-bottom:3px;}
+.txn-field .field-value{font-size:.9rem;font-weight:600;color:var(--text);line-height:1.3;}
+.txn-field .field-value.amount{font-family:var(--font-d);font-size:1.15rem;color:var(--primary);}
+.txn-field .field-value.role-badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:.72rem;font-weight:700;background:#f0f4ff;color:#4338ca;}
+.txn-field .field-value.role-seller{background:#f0fdf4;color:#166534;}
+.txn-actions{display:flex;gap:8px;flex-wrap:wrap;padding-top:12px;border-top:1px solid var(--border);}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 18px;border-radius:var(--r-lg);font-family:var(--font-b);font-size:.78rem;font-weight:700;border:none;cursor:pointer;transition:all .2s;text-decoration:none;white-space:nowrap;}
+.btn-primary{background:var(--primary);color:#fff;box-shadow:0 2px 8px rgba(0,123,255,.2);}
+.btn-primary:hover{background:var(--primary-dark);transform:translateY(-1px);}
+.btn-green{background:#16a34a;color:#fff;}
+.btn-green:hover{background:#15803d;}
+.btn-outline{background:transparent;color:var(--text-2);border:1px solid var(--border);}
+.btn-outline:hover{background:var(--bg-muted);color:var(--text);}
+.btn-danger{background:transparent;color:var(--danger);border:1px solid rgba(220,38,38,.3);}
+.btn-danger:hover{background:#fef2f2;}
+.btn-sm{padding:7px 14px;font-size:.74rem;}
+.btn:disabled{opacity:.5;pointer-events:none;}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .2s;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.modal{background:var(--bg-card);border-radius:var(--r-xl);padding:32px;max-width:480px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.2);}
+.modal h3{font-family:var(--font-d);font-size:1.4rem;font-weight:600;margin-bottom:8px;}
+.modal p{font-size:.85rem;color:var(--text-2);margin-bottom:20px;line-height:1.6;}
+.form-group{margin-bottom:16px;}
+.form-label{display:block;font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-2);margin-bottom:6px;}
+.form-input,.form-select,.form-textarea{width:100%;background:var(--bg-muted);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:var(--font-b);font-size:.9rem;padding:11px 14px;outline:none;transition:border-color .2s,box-shadow .2s;}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(0,123,255,.1);background:#fff;}
+.form-textarea{resize:vertical;min-height:80px;}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;}
+.empty{text-align:center;padding:60px 20px;}
+.empty-icon{font-size:3rem;margin-bottom:12px;}
+.empty h3{font-family:var(--font-d);font-size:1.5rem;margin-bottom:6px;}
+.empty p{color:var(--text-2);font-size:.875rem;margin-bottom:20px;}
+.spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.spinner-dark{border-color:rgba(0,123,255,.2);border-top-color:var(--primary);}
+.loading-wrap{text-align:center;padding:48px;color:var(--text-m);}
+.pagination{display:flex;gap:6px;justify-content:center;margin-top:24px;flex-wrap:wrap;}
+.pag-btn{padding:7px 14px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg-card);color:var(--text-2);font-family:var(--font-b);font-size:.78rem;font-weight:600;cursor:pointer;transition:all .2s;}
+.pag-btn:hover{background:var(--bg-muted);}
+.pag-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+.pag-btn:disabled{opacity:.4;pointer-events:none;}
+@media(max-width:720px){.stats-row{grid-template-columns:repeat(2,1fr);}.txn-body{grid-template-columns:1fr 1fr;}.create-card{flex-direction:column;}.main{padding:20px 14px 80px;}}
+@media(max-width:480px){.txn-body{grid-template-columns:1fr;}.stats-row{grid-template-columns:repeat(2,1fr);}}
+</style>
+</head>
+<body>
+<script>document.addEventListener('DOMContentLoaded',()=>renderNavbar('transactions',{showLogin:false}));</script>
+
+<main class="main" id="mainWrap" style="display:none">
+  <div class="page-hero">
+    <h1 class="page-title">Transactions</h1>
+    <p class="page-sub">Track all your purchases, sales and e-tickets in one place.</p>
+  </div>
+
+  <div class="stats-row" id="statsRow">
+    <div class="stat-card"><div class="stat-label">Total</div><div class="stat-value blue" id="statTotal">—</div></div>
+    <div class="stat-card"><div class="stat-label">Completed</div><div class="stat-value green" id="statCompleted">—</div></div>
+    <div class="stat-card"><div class="stat-label">Pending</div><div class="stat-value amber" id="statPending">—</div></div>
+    <div class="stat-card"><div class="stat-label">Disputed</div><div class="stat-value red" id="statDisputed">—</div></div>
+  </div>
+
+  <div class="create-card">
+    <div class="create-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+    </div>
+    <div class="create-body">
+      <h3>Record a Transaction</h3>
+      <p>Agreed on a deal? Create a transaction record — both parties get a unique ticket number as proof. The buyer confirms receipt to complete the transaction.</p>
+      <div class="create-actions">
+        <button class="btn btn-primary btn-sm" onclick="openCreateModal()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          New Transaction
+        </button>
+        <a href="browse.html" class="btn btn-outline btn-sm">Browse Listings</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="setTab('all',this)">All</button>
+    <button class="tab-btn" onclick="setTab('pending',this)">Pending</button>
+    <button class="tab-btn" onclick="setTab('confirmed',this)">Confirmed</button>
+    <button class="tab-btn" onclick="setTab('completed',this)">Completed</button>
+    <button class="tab-btn" onclick="setTab('disputed',this)">Disputed</button>
+    <button class="tab-btn" onclick="setTab('cancelled',this)">Cancelled</button>
+  </div>
+
+  <div id="txnList"><div class="loading-wrap"><div class="spinner spinner-dark" style="margin:0 auto;width:28px;height:28px;border-width:3px;"></div></div></div>
+  <div class="pagination" id="pagination"></div>
+</main>
+
+<div id="authWall" style="display:none;padding:0 20px">
+  <div style="max-width:400px;margin:80px auto;text-align:center;background:#fff;border:1px solid #e2e8f0;border-radius:18px;padding:40px;">
+    <div style="font-size:2.5rem;margin-bottom:14px">🔒</div>
+    <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;margin-bottom:8px">Sign In Required</h2>
+    <p style="color:#555770;margin-bottom:20px;font-size:.9rem">Sign in to view your transactions and e-tickets.</p>
+    <a href="login.html?redirect=transactions.html" class="btn btn-primary">Sign In</a>
+  </div>
+</div>
+
+<!-- Create Transaction Modal -->
+<div class="modal-overlay" id="createModal" style="display:none" onclick="if(event.target===this)closeCreateModal()">
+  <div class="modal">
+    <h3>Record a Transaction</h3>
+    <p>Fill in the deal details. Both parties will receive a unique ticket number as proof of transaction.</p>
+    <div class="form-group">
+      <label class="form-label">Item / Listing <span style="color:var(--danger)">*</span></label>
+      <input type="text" class="form-input" id="cr-listingTitle" placeholder="e.g. Calculus Textbook 8th Edition">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Seller's Student ID or Name <span style="color:var(--danger)">*</span></label>
+      <input type="text" class="form-input" id="cr-seller" placeholder="e.g. LUA/2022/0001 or Full Name">
+      <div style="font-size:.72rem;color:var(--text-m);margin-top:4px">We'll look up their account. Both parties must be registered.</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="form-group">
+        <label class="form-label">Amount (MK) <span style="color:var(--danger)">*</span></label>
+        <input type="number" class="form-input" id="cr-amount" placeholder="e.g. 15000" min="100">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Payment Method</label>
+        <select class="form-select" id="cr-method">
+          <option value="mpamba">TNM Mpamba</option>
+          <option value="airtel">Airtel Money</option>
+          <option value="nbm">National Bank</option>
+          <option value="cash">Cash</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Payment Reference (optional)</label>
+      <input type="text" class="form-input" id="cr-ref" placeholder="e.g. MPM-20261234">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Notes (optional)</label>
+      <textarea class="form-textarea" id="cr-notes" placeholder="Any additional details about the deal…" rows="2"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeCreateModal()">Cancel</button>
+      <button class="btn btn-primary" id="cr-submit" onclick="submitCreate()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        Create Transaction
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Dispute Modal -->
+<div class="modal-overlay" id="disputeModal" style="display:none" onclick="if(event.target===this)closeDisputeModal()">
+  <div class="modal">
+    <h3>Open a Dispute</h3>
+    <p>Describe the issue clearly. An admin will review and contact both parties.</p>
+    <input type="hidden" id="dispute-txnId">
+    <div class="form-group">
+      <label class="form-label">Reason for Dispute <span style="color:var(--danger)">*</span></label>
+      <textarea class="form-textarea" id="dispute-reason" placeholder="e.g. Item not received after payment, or item was not as described…" rows="4"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeDisputeModal()">Cancel</button>
+      <button class="btn btn-danger" id="dispute-submit" onclick="submitDispute()">Submit Dispute</button>
+    </div>
+  </div>
+</div>
+
+<div id="toastWrap"></div>
+
+<script>
+// ── NO re-declaration of API — use the global from config.js ──
+document.addEventListener('DOMContentLoaded', function () {
+  const token = utUtils.getToken();
+  const me    = utUtils.getUser();
+
+  if (!token || !me) {
+    document.getElementById('authWall').style.display = 'block';
+    return;
+  }
+
+  document.getElementById('mainWrap').style.display = 'block';
+  init();
+});
+
+// module-level state (no const API — already global from config.js)
+let _me          = null;
+let _token       = null;
+let currentTab   = 'all';
+let currentPage  = 1;
+let txnStats     = {};
+
+function init() {
+  _token = utUtils.getToken();
+  _me    = utUtils.getUser();
+  loadStats();
+  loadTransactions(1);
+}
+
+function authH() {
+  return { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (_token || utUtils.getToken()) };
+}
+
+async function loadStats() {
+  const res = await fetch(API + '/transactions/mine?limit=200', { headers: authH() });
+  if (!res.ok) return;
+  const data = await res.json();
+  const all  = data.data || [];
+  const cnt  = s => all.filter(t => t.status === s).length;
+  document.getElementById('statTotal').textContent     = all.length;
+  document.getElementById('statCompleted').textContent = cnt('completed');
+  document.getElementById('statPending').textContent   = cnt('pending');
+  document.getElementById('statDisputed').textContent  = cnt('disputed');
+  txnStats = { all: all.length, pending: cnt('pending'), confirmed: cnt('confirmed'), completed: cnt('completed'), disputed: cnt('disputed'), cancelled: cnt('cancelled') };
+}
+
+async function loadTransactions(page) {
+  page = page || currentPage;
+  currentPage = page;
+  const list = document.getElementById('txnList');
+  list.innerHTML = '<div class="loading-wrap"><div class="spinner spinner-dark" style="margin:0 auto;width:28px;height:28px;border-width:3px;"></div></div>';
+
+  const params = new URLSearchParams({ page, limit: 15 });
+  if (currentTab !== 'all') params.set('status', currentTab);
+  const res = await fetch(API + '/transactions/mine?' + params, { headers: authH() });
+  if (!res.ok) { list.innerHTML = '<div class="empty"><p>Failed to load transactions.</p></div>'; return; }
+
+  const data     = await res.json();
+  const filtered = data.data || [];
+
+  renderPagination(data.total, data.totalPages, page);
+
+  if (!filtered.length) {
+    list.innerHTML = `
+      <div class="empty">
+        <div class="empty-icon">🧾</div>
+        <h3>No ${currentTab === 'all' ? '' : currentTab + ' '}transactions yet</h3>
+        <p>${currentTab === 'all' ? 'Start by recording a deal with another student.' : 'No transactions with this status found.'}</p>
+        ${currentTab === 'all' ? '<button class="btn btn-primary" onclick="openCreateModal()">Record First Transaction</button>' : ''}
+      </div>`;
+    return;
+  }
+
+  list.innerHTML = '<div class="txn-list">' + filtered.map(renderTxn).join('') + '</div>';
+}
+
+function renderTxn(t) {
+  const me       = _me || utUtils.getUser();
+  const isBuyer  = t.buyerId  === me.id;
+  const isSeller = t.sellerId === me.id;
+  const role     = isBuyer ? 'Buyer' : 'Seller';
+  const other    = isBuyer ? t.sellerName : t.buyerName;
+  const statusCls = { pending:'status-pending', confirmed:'status-confirmed', completed:'status-completed', disputed:'status-disputed', cancelled:'status-cancelled' }[t.status] || 'status-pending';
+  const statusLbl = { pending:'Pending', confirmed:'Confirmed', completed:'Completed', disputed:'Disputed', cancelled:'Cancelled' }[t.status] || t.status;
+  const amt     = n => 'MK ' + Number(n).toLocaleString();
+  const dateStr = new Date(t.createdAt).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+
+  let actions = '';
+  if (t.status === 'pending') {
+    if (isSeller) actions += `<button class="btn btn-green btn-sm" onclick="sellerConfirm(${t.id})">✓ Confirm Payment Received</button>`;
+    if (isBuyer)  actions += `<button class="btn btn-danger btn-sm" onclick="cancelTxn(${t.id})">Cancel</button>`;
+    if (isBuyer)  actions += `<button class="btn btn-danger btn-sm" onclick="openDisputeModal(${t.id})">Dispute</button>`;
+  }
+  if (t.status === 'confirmed' && isBuyer) {
+    actions += `<button class="btn btn-green btn-sm" onclick="confirmReceipt(${t.id})">✓ I Received the Item</button>`;
+    actions += `<button class="btn btn-danger btn-sm" onclick="openDisputeModal(${t.id})">Dispute</button>`;
+  }
+  if (['pending','confirmed','completed','disputed'].includes(t.status)) {
+    actions += `<a href="${API}/transactions/${t.id}/receipt" target="_blank" class="btn btn-outline btn-sm">🧾 Receipt</a>`;
+  }
+
+  return `
+  <div class="txn-card" id="txn-${t.id}">
+    <div class="txn-header">
+      <span class="txn-ticket">${t.ticketNumber}</span>
+      <span class="txn-status ${statusCls}">${statusLbl}</span>
+    </div>
+    <div class="txn-body">
+      <div class="txn-field"><div class="field-label">Item</div><div class="field-value">${escHtml(t.listingTitle || 'N/A')}</div></div>
+      <div class="txn-field"><div class="field-label">Amount</div><div class="field-value amount">${amt(t.amount)}</div></div>
+      <div class="txn-field"><div class="field-label">Your Role</div><div class="field-value role-badge ${isSeller ? 'role-seller' : ''}">${role}</div></div>
+      <div class="txn-field"><div class="field-label">${isBuyer ? 'Seller' : 'Buyer'}</div><div class="field-value">${escHtml(other || '—')}</div></div>
+      <div class="txn-field"><div class="field-label">Method</div><div class="field-value">${(t.paymentMethod||'').toUpperCase()}</div></div>
+      <div class="txn-field"><div class="field-label">Date</div><div class="field-value">${dateStr}</div></div>
+    </div>
+    ${t.notes ? `<div style="font-size:.8rem;color:var(--text-2);background:var(--bg-muted);border-radius:var(--r);padding:8px 12px;margin-bottom:10px;border-left:3px solid var(--border);">${escHtml(t.notes)}</div>` : ''}
+    ${actions ? `<div class="txn-actions">${actions}</div>` : ''}
+  </div>`;
+}
+
+function renderPagination(total, totalPages, page) {
+  const el = document.getElementById('pagination');
+  if (totalPages <= 1) { el.innerHTML = ''; return; }
+  let html = `<button class="pag-btn" onclick="loadTransactions(${page-1})" ${page===1?'disabled':''}>← Prev</button>`;
+  for (let i = 1; i <= totalPages; i++) {
+    if (i===1||i===totalPages||Math.abs(i-page)<=1)
+      html += `<button class="pag-btn ${i===page?'active':''}" onclick="loadTransactions(${i})">${i}</button>`;
+    else if (Math.abs(i-page)===2)
+      html += `<span style="padding:7px 4px;color:var(--text-m)">…</span>`;
+  }
+  html += `<button class="pag-btn" onclick="loadTransactions(${page+1})" ${page===totalPages?'disabled':''}>Next →</button>`;
+  el.innerHTML = html;
+}
+
+function setTab(tab, btn) {
+  currentTab  = tab;
+  currentPage = 1;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  loadTransactions(1);
+}
+
+async function confirmReceipt(id) {
+  if (!confirm('Confirm you received the item? This completes the transaction and cannot be undone.')) return;
+  const res  = await fetch(API + `/transactions/${id}/confirm`, { method:'PUT', headers: authH() });
+  const data = await res.json();
+  if (res.ok) { utUtils.showToast('Transaction completed! 🎉', 'success'); loadStats(); loadTransactions(); }
+  else utUtils.showToast(data.message || 'Error', 'error');
+}
+
+async function sellerConfirm(id) {
+  if (!confirm('Confirm you received payment from the buyer?')) return;
+  const res  = await fetch(API + `/transactions/${id}/seller-confirm`, { method:'PUT', headers: authH() });
+  const data = await res.json();
+  if (res.ok) { utUtils.showToast('Payment confirmed. Waiting for buyer to confirm receipt.', 'success'); loadTransactions(); }
+  else utUtils.showToast(data.message || 'Error', 'error');
+}
+
+async function cancelTxn(id) {
+  if (!confirm('Cancel this transaction? This cannot be undone.')) return;
+  const res  = await fetch(API + `/transactions/${id}/cancel`, { method:'PUT', headers: authH() });
+  const data = await res.json();
+  if (res.ok) { utUtils.showToast('Transaction cancelled.', 'info'); loadStats(); loadTransactions(); }
+  else utUtils.showToast(data.message || 'Error', 'error');
+}
+
+function openCreateModal()  { document.getElementById('createModal').style.display = 'flex'; }
+function closeCreateModal() { document.getElementById('createModal').style.display = 'none'; }
+
+async function submitCreate() {
+  const seller = document.getElementById('cr-seller').value.trim();
+  const title  = document.getElementById('cr-listingTitle').value.trim();
+  const amount = parseFloat(document.getElementById('cr-amount').value);
+  const method = document.getElementById('cr-method').value;
+  const ref    = document.getElementById('cr-ref').value.trim();
+  const notes  = document.getElementById('cr-notes').value.trim();
+
+  if (!seller) return utUtils.showToast('Seller ID or name is required', 'error');
+  if (!title)  return utUtils.showToast('Item title is required', 'error');
+  if (!amount || amount < 100) return utUtils.showToast('Amount must be at least MK 100', 'error');
+
+  const btn = document.getElementById('cr-submit');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Creating…';
+
+  try {
+    // Use the dedicated lookup endpoint (accessible to all logged-in users)
+    const lookupRes  = await fetch(API + `/users/lookup?q=${encodeURIComponent(seller)}`, { headers: authH() });
+    let sellerId = null;
+
+    if (lookupRes.ok) {
+      const found = await lookupRes.json();
+      if (found && found.id) sellerId = found.id;
+    }
+
+    if (!sellerId) {
+      const manualId = prompt(`Could not find "${seller}". Enter their UniTrade User ID number (visible on their profile):`);
+      if (!manualId || isNaN(parseInt(manualId))) {
+        utUtils.showToast('Seller not found. Ask them for their User ID.', 'error');
+        btn.disabled = false;
+        btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Create Transaction';
+        return;
+      }
+      sellerId = parseInt(manualId);
+    }
+
+    const res  = await fetch(API + '/transactions', {
+      method: 'POST', headers: authH(),
+      body: JSON.stringify({ sellerId, listingTitle: title, amount, paymentMethod: method, paymentRef: ref, notes }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Failed');
+
+    utUtils.showToast(`Transaction created! Ticket: ${data.transaction.ticketNumber}`, 'success');
+    closeCreateModal();
+    loadStats();
+    loadTransactions();
+    ['cr-seller','cr-listingTitle','cr-amount','cr-ref','cr-notes'].forEach(id => { document.getElementById(id).value = ''; });
+  } catch (err) {
+    utUtils.showToast(err.message || 'Could not create transaction', 'error');
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Create Transaction';
+}
+
+function openDisputeModal(id) {
+  document.getElementById('dispute-txnId').value = id;
+  document.getElementById('disputeModal').style.display = 'flex';
+}
+function closeDisputeModal() { document.getElementById('disputeModal').style.display = 'none'; }
+
+async function submitDispute() {
+  const id     = document.getElementById('dispute-txnId').value;
+  const reason = document.getElementById('dispute-reason').value.trim();
+  if (!reason) return utUtils.showToast('Please describe the dispute', 'error');
+  const btn = document.getElementById('dispute-submit');
+  btn.disabled = true;
+  const res  = await fetch(API + `/transactions/${id}/dispute`, { method:'PUT', headers: authH(), body: JSON.stringify({ reason }) });
+  const data = await res.json();
+  if (res.ok) { utUtils.showToast('Dispute submitted. Admin will review shortly.', 'info'); closeDisputeModal(); loadStats(); loadTransactions(); }
+  else utUtils.showToast(data.message || 'Error', 'error');
+  btn.disabled = false;
+}
+
+function escHtml(s) { const d = document.createElement('div'); d.textContent = String(s||''); return d.innerHTML; }
+</script>
+</body>
+</html>

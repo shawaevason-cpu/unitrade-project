@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Listing - UniTrade</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{--primary:#007bff;--primary-hover:#0056b3;--primary-dim:rgba(0,123,255,0.08);--secondary:#28a745;--danger:#dc2626;--bg-page:#f4f6f9;--bg-card:#fff;--bg-tertiary:#f8f9fa;--border:#e2e8f0;--text-primary:#1a1a2e;--text-secondary:#555770;--text-muted:#9ca3af;--radius:8px;--radius-lg:12px;--radius-xl:18px;--sp2:8px;--sp3:12px;--sp4:16px;--sp6:24px;--sp8:32px;--font-display:'Cormorant Garamond',Georgia,serif;--font-body:'Syne',system-ui,sans-serif;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg-page);color:var(--text-primary);font-family:var(--font-body);font-size:15px;line-height:1.6;min-height:100vh;padding-top:60px;}
+    
+    .logo{font-size:22px;font-weight:700;color:#007bff;text-decoration:none;}.logo span{color:#333;}
+    .nav-links{display:flex;gap:4px;align-items:center;}
+    .nav-link{padding:7px 12px;border-radius:var(--radius);text-decoration:none;color:#333;font-size:0.82rem;font-weight:500;transition:background .2s;}.nav-link:hover{background:#f0f0f0;}
+    .btn-post{padding:8px 16px;background:var(--primary);color:#fff;border-radius:var(--radius);text-decoration:none;font-size:0.82rem;font-weight:700;box-shadow:0 2px 8px rgba(0,123,255,.25);transition:background .2s;}.btn-post:hover{background:var(--primary-hover);}
+    .main{max-width:1100px;margin:0 auto;padding:32px 20px;}
+    .listing-card{max-width:100%;margin:0 auto;position:relative;}
+    .back-link{display:inline-flex;align-items:center;gap:6px;color:var(--text-secondary);text-decoration:none;font-size:.82rem;font-weight:600;margin-bottom:24px;transition:color .2s;}.back-link:hover{color:var(--primary);}
+    .detail-grid{display:grid;grid-template-columns:1fr 360px;gap:32px;align-items:start;}
+    .gallery{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-xl);overflow:hidden;margin-bottom:16px;position:relative;}
+    .main-img{width:100%;aspect-ratio:4/3;overflow:hidden;background:var(--bg-tertiary);position:relative;cursor:pointer;}
+    .main-img img{width:100%;height:100%;object-fit:cover;display:block;}
+    .img-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;color:var(--text-muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;}
+    .dots-container{display:flex;justify-content:center;gap:8px;padding:12px;}
+    .dot{width:8px;height:8px;border-radius:50%;background:#ccc;cursor:pointer;}
+    .dot.active{background:#007bff;}
+    .listing-details{padding:24px;}
+    .seller-row{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:12px;}
+    .seller-profile{display:flex;align-items:center;gap:12px;}
+    .listing-title{font-family:var(--font-display);font-size:1.95rem;font-weight:600;line-height:1.2;margin-bottom:0;color:var(--text-primary);}
+    .listing-summary{margin-bottom:16px;}
+    .condition-pill{position:absolute;bottom:16px;right:16px;background:rgba(255,255,255,.88);border:1px solid #fff;border-radius:999px;padding:10px 14px;font-size:.82rem;font-weight:700;color:var(--text-primary);box-shadow:0 12px 28px rgba(0,0,0,.1);z-index:2;}
+    .listing-condition{display:none;}
+    .seller-meta{font-size:.82rem;color:var(--text-muted);white-space:nowrap;}
+    .listing-description{margin-top:16px;}
+    .desc-text{font-size:.88rem;color:var(--text-secondary);line-height:1.7;}
+    .show-more-btn{background:none;border:none;color:var(--primary);cursor:pointer;font-size:.85rem;margin-top:10px;font-weight:700;}
+    .action-buttons{display:flex;flex-wrap:wrap;gap:10px;padding:0 24px 24px;justify-content:flex-start;}
+    .action-buttons .btn{flex:1 1 140px;min-width:140px;}
+    /* ── Gallery enhancements ── */
+    .gallery{border-radius:var(--radius-xl);overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.09);}
+    .main-img{cursor:zoom-in;transition:opacity .2s;}
+    .main-img img{transition:transform .35s ease;}
+    .main-img:hover img{transform:scale(1.04);}
+    .main-img::after{content:'⤢ Tap to expand';position:absolute;bottom:10px;right:12px;background:rgba(0,0,0,.5);color:#fff;font-size:.68rem;font-weight:700;padding:4px 10px;border-radius:20px;pointer-events:none;opacity:0;transition:opacity .2s;}
+    .main-img:hover::after{opacity:1;}
+
+    /* ── Premium fullscreen lightbox (replaces basic .modal) ── */
+    .modal{position:fixed;inset:0;background:rgba(0,0,0,.96);display:flex;align-items:center;justify-content:center;z-index:10000;flex-direction:column;}
+    .modal-content{position:relative;width:100vw;height:100vh;max-width:100vw;max-height:100vh;display:flex;align-items:center;justify-content:center;padding:0 12px;}
+    .modal-content img{width:100%;height:100%;object-fit:contain;border-radius:0;box-shadow:0 8px 40px rgba(0,0,0,.6);user-select:none;transition:opacity .18s;}
+    .modal-content img.lb-fade{opacity:0;}
+    .close-btn{position:fixed;top:14px;right:16px;background:rgba(255,255,255,.13);color:#fff;border:none;font-size:22px;width:42px;height:42px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;z-index:10001;}
+    .close-btn:hover{background:rgba(255,255,255,.28);}
+    .prev-btn,.next-btn{position:fixed;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.13);color:#fff;border:none;font-size:28px;width:48px;height:48px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;z-index:10001;line-height:1;}
+    .prev-btn{left:14px;}.next-btn{right:14px;}
+    .prev-btn:hover,.next-btn:hover{background:rgba(255,255,255,.28);}
+    .prev-btn:disabled,.next-btn:disabled{opacity:.2;pointer-events:none;}
+    #lbCounter{position:fixed;top:18px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.8);font-size:.82rem;font-weight:700;z-index:10001;font-family:var(--font-body);}
+    #lbDots{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:10001;}
+    .lb-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.35);cursor:pointer;transition:background .2s,transform .2s;border:none;}
+    .lb-dot.active{background:#fff;transform:scale(1.35);}
+
+    .card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-xl);padding:24px;margin-bottom:16px;}
+    .badge{display:inline-block;padding:3px 12px;border-radius:20px;font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:var(--primary-dim);color:var(--primary);border:1px solid rgba(0,123,255,.15);margin-bottom:12px;}
+    .listing-title{font-family:var(--font-display);font-size:2rem;font-weight:600;line-height:1.2;margin-bottom:12px;}
+    .listing-price{font-family:var(--font-display);font-size:2.2rem;font-weight:700;color:var(--primary);margin-bottom:16px;}
+    .engagement{display:flex;gap:16px;margin-bottom:24px;font-size:.8rem;color:var(--text-muted);}
+    .eng-stat{display:flex;align-items:center;gap:5px;}
+    .action-col{display:flex;flex-direction:column;gap:8px;}
+    .btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;border-radius:var(--radius-lg);font-family:var(--font-body);font-size:.85rem;font-weight:700;border:none;cursor:pointer;transition:all .2s;text-decoration:none;}
+    .btn-blue{background:var(--primary);color:#fff;box-shadow:0 2px 10px rgba(0,123,255,.25);}.btn-blue:hover{background:var(--primary-hover);transform:translateY(-1px);}
+    .btn-wa{background:#25D366;color:#fff;}.btn-wa:hover{background:#1ebe5d;transform:translateY(-1px);}
+    .btn-outline{background:transparent;color:var(--text-secondary);border:1px solid var(--border);}.btn-outline:hover{background:var(--bg-tertiary);color:var(--text-primary);}
+    .btn-outline.liked{color:#007bff;border-color:rgba(0,123,255,.35);background:rgba(0,123,255,.05);}
+    .seller-row{display:flex;align-items:center;gap:12px;margin-bottom:8px;}
+    .seller-av{width:40px;height:40px;border-radius:50%;background:var(--primary-dim);color:var(--primary);display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:800;overflow:hidden;border:2px solid rgba(0,123,255,.15);}
+    .seller-av img{width:100%;height:100%;object-fit:cover;}
+    .seller-name{font-weight:700;font-size:.9rem;}
+    .seller-meta{font-size:.75rem;color:var(--text-muted);margin-top:2px;}
+    .online-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#22c55e;margin-right:4px;}
+    .details-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px;font-size:.82rem;margin-top:16px;}
+    .detail-lbl{color:var(--text-muted);font-weight:600;text-transform:uppercase;font-size:.7rem;letter-spacing:.08em;}.detail-val{font-weight:600;color:var(--text-primary);}
+    .safety{background:#f0fdf4;border:1px solid rgba(34,197,94,.2);border-radius:var(--radius-lg);padding:16px;}
+    .safety h5{font-size:.82rem;font-weight:700;color:#166534;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+    .safety ul{font-size:.75rem;color:#15803d;padding-left:16px;}.safety li{margin-bottom:4px;}
+    .desc-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-xl);padding:24px;margin-top:16px;}
+    .section-title{font-family:var(--font-display);font-size:1.25rem;font-weight:600;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+    .desc-text{font-size:.88rem;color:var(--text-secondary);line-height:1.7;}
+    /* ── COMMENTS ── */
+    .comments-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-xl);padding:24px;margin-top:16px;}
+    .comments-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+    .comments-header h3{font-family:var(--font-display);font-size:1.25rem;font-weight:600;}
+    .likes-count{display:flex;align-items:center;gap:6px;font-size:.85rem;color:var(--text-secondary);font-weight:600;cursor:pointer;padding:4px 8px;border-radius:6px;transition:background .2s;}
+    .likes-count:hover{background:rgba(0,123,255,.1);color:#007bff;}
+    .likes-count.liked{background:#007bff;color:#fff;}
+    .likes-icon{font-size:1rem;}
+    .likes-number{min-width:12px;text-align:center;}
+    .cmt-badge{background:var(--primary-dim);color:var(--primary);border-radius:20px;padding:2px 10px;font-size:.75rem;font-weight:700;}
+    .thread{display:flex;flex-direction:column;}
+    .comment-block{border-bottom:1px solid var(--border);}.comment-block:last-child{border-bottom:none;}
+    .comment-root{display:flex;gap:12px;padding:16px 0;}
+    .cmt-av{width:36px;height:36px;border-radius:50%;background:var(--primary-dim);color:var(--primary);display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800;flex-shrink:0;}
+    .cmt-body{flex:1;min-width:0;}
+    .cmt-meta{display:flex;align-items:baseline;gap:8px;margin-bottom:4px;flex-wrap:wrap;}
+    .cmt-author{font-weight:700;font-size:.85rem;color:var(--text-primary);}
+    .cmt-time{font-size:.7rem;color:var(--text-muted);}
+    .cmt-text{font-size:.85rem;color:var(--text-secondary);line-height:1.55;word-break:break-word;}
+    .cmt-actions{display:flex;gap:12px;margin-top:6px;flex-wrap:wrap;}
+    .cmt-btn{background:none;border:none;cursor:pointer;font-size:.72rem;color:var(--text-muted);font-family:var(--font-body);padding:0;transition:color .15s;font-weight:600;}.cmt-btn:hover{color:var(--primary);}.cmt-btn.del:hover{color:var(--danger);}
+    .replies-wrap{margin-left:48px;border-left:2px solid var(--border);padding-left:16px;}
+    .reply-item{display:flex;gap:10px;padding:12px 0;border-bottom:1px solid var(--border);}.reply-item:last-child{border-bottom:none;}
+    .reply-av{width:28px;height:28px;border-radius:50%;background:var(--bg-tertiary);color:var(--text-muted);display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:800;flex-shrink:0;}
+    .reply-form{margin-left:48px;margin-bottom:8px;display:none;gap:8px;align-items:flex-start;}.reply-form.open{display:flex;}
+    .reply-input{flex:1;padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius);font-family:var(--font-body);font-size:.82rem;color:var(--text-primary);background:var(--bg-tertiary);outline:none;transition:border-color .2s,box-shadow .2s;resize:none;min-height:38px;}.reply-input:focus{border-color:var(--primary);background:#fff;box-shadow:0 0 0 2px rgba(0,123,255,.1);}
+    .reply-send{padding:8px 14px;background:var(--primary);color:#fff;border:none;border-radius:var(--radius);font-family:var(--font-body);font-size:.75rem;font-weight:700;cursor:pointer;flex-shrink:0;transition:background .2s;}.reply-send:hover{background:var(--primary-hover);}
+    .reply-cancel{padding:8px 10px;background:var(--bg-tertiary);color:var(--text-secondary);border:1px solid var(--border);border-radius:var(--radius);font-family:var(--font-body);font-size:.75rem;font-weight:600;cursor:pointer;flex-shrink:0;}
+    .cmt-input-wrap{margin-top:24px;padding-top:24px;border-top:1px solid var(--border);}
+    .cmt-input-row{display:flex;gap:12px;align-items:flex-start;}
+    .my-av{width:36px;height:36px;border-radius:50%;background:var(--primary-dim);color:var(--primary);display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800;flex-shrink:0;}
+    .cmt-textarea{flex:1;padding:11px 14px;border:1px solid var(--border);border-radius:var(--radius-lg);font-family:var(--font-body);font-size:.88rem;color:var(--text-primary);background:var(--bg-tertiary);outline:none;resize:vertical;min-height:80px;transition:border-color .2s,box-shadow .2s;}.cmt-textarea:focus{border-color:var(--primary);background:#fff;box-shadow:0 0 0 3px rgba(0,123,255,.1);}
+    .cmt-send-row{display:flex;justify-content:flex-end;margin-top:8px;}
+    .btn-send{padding:9px 22px;background:var(--primary);color:#fff;border:none;border-radius:var(--radius);font-family:var(--font-body);font-size:.82rem;font-weight:700;cursor:pointer;transition:background .2s;}.btn-send:hover{background:var(--primary-hover);}
+    .no-comments{text-align:center;padding:32px 0;color:var(--text-muted);font-size:.85rem;}
+    .skeleton{background:linear-gradient(90deg,#f0f2f5 25%,#e8eaed 50%,#f0f2f5 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:4px;}
+    @keyframes shimmer{from{background-position:200% 0;}to{background-position:-200% 0;}}
+    #toastWrap{position:fixed;bottom:20px;right:20px;display:flex;flex-direction:column;gap:8px;z-index:9999;pointer-events:none;}
+    .toast{color:#fff;padding:12px 18px;border-radius:10px;font-size:.82rem;font-weight:500;box-shadow:0 4px 16px rgba(0,0,0,.15);animation:sIn .3s ease;max-width:280px;}
+    .toast.success{background:#166534;}.toast.error{background:var(--danger);}.toast.info{background:var(--primary);}
+    @keyframes sIn{from{opacity:0;transform:translateX(30px);}to{opacity:1;transform:translateX(0);}}
+    @media(max-width:768px){
+      .detail-grid{grid-template-columns:1fr;}
+      .main{padding:16px 14px;}
+      .listing-title{font-size:1.5rem;}
+      .details-top{flex-direction:column;align-items:stretch;gap:12px;}
+      .details-right{text-align:left;}
+      .action-buttons{flex-wrap:wrap;gap:10px;padding:0 24px 24px;justify-content:center;}
+      .action-buttons .btn{flex:1 1 80px;min-width:80px;max-width:100px;}
+      .details-left,.details-right{min-width:0;}
+      .listing-title{word-break:break-word;}
+      .listing-price{white-space:normal;}
+      .gallery{margin-bottom:20px;}
+    }
+    .navbar{display:flex;justify-content:space-between;align-items:center;padding:10px 20px;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.1);top:0;z-index:1000;gap:16px;}
+.logo{font-size:22px;font-weight:700;color:#007bff;text-decoration:none;flex-shrink:0;}.logo span{color:#333;}
+.nav-links{display:flex;gap:4px;align-items:center;}
+.nav-link{padding:7px 10px;border-radius:var(--radius);text-decoration:none;color:#555;font-size:.8rem;font-weight:500;transition:background .2s,color .2s;display:flex;align-items:center;gap:4px;}
+.nav-link:hover{background:#f0f0f0;color:#007bff;}
+.nav-link.nav-active{color:#007bff;font-weight:700;background:rgba(0,123,255,.06);}
+.nav-notif{position:relative;}
+.nav-badge{position:absolute;top:-5px;right:-5px;background:var(--danger);color:#fff;border-radius:50%;min-width:16px;height:16px;font-size:.6rem;font-weight:800;display:none;align-items:center;justify-content:center;border:2px solid #fff;padding:0 2px;}
+.nav-av{width:34px;height:34px;border-radius:50%;background:var(--primary-dim);color:var(--primary);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;text-decoration:none;transition:box-shadow .2s,transform .15s;border:2px solid transparent;overflow:hidden;flex-shrink:0;}
+.nav-av:hover{transform:scale(1.08);box-shadow:0 0 0 3px rgba(0,123,255,.2);}
+.nav-av.nav-av-on{border-color:var(--primary);}
+.nav-av img{width:100%;height:100%;object-fit:cover;}
+#toastWrap{position:fixed;bottom:20px;right:20px;display:flex;flex-direction:column;gap:8px;z-index:9999;pointer-events:none;}
+.toast{color:#fff;padding:12px 18px;border-radius:10px;font-size:.82rem;font-weight:500;box-shadow:0 4px 16px rgba(0,0,0,.15);animation:sIn .3s ease;max-width:280px;}
+.toast.success{background:#166534;}.toast.error{background:var(--danger);}.toast.info{background:var(--primary);}
+@keyframes sIn{from{opacity:0;transform:translateX(30px);}to{opacity:1;transform:translateX(0);}}
+@media(max-width:640px){.navbar{flex-wrap:wrap;gap:6px;}.nav-links{gap:2px;}}
+</style>
+  <link rel="stylesheet" href="../css/ut.css">
+  <script src="../js/config.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/navbar.js"></script>
+</head>
+<body>
+  <script>document.addEventListener('DOMContentLoaded',()=>renderNavbar('listing',{showLogin:false}));</script>
+  
+  <main class="main">
+    <a href="javascript:history.back()" class="back-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      Back
+    </a>
+    <div class="listing-card" id="listingCard">
+      <div class="gallery">
+        <div class="main-img" id="mainImg" onclick="openFullScreen()">
+          <div class="img-placeholder">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <div>Loading image...</div>
+          </div>
+        </div>
+        <div class="condition-pill" id="itemCondition">Condition</div>
+        <div class="dots-container" id="dotsContainer" style="display:none;"></div>
+      </div>
+      <div class="listing-details" id="listingDetails">
+        <div class="seller-row">
+          <div class="seller-profile">
+            <div class="seller-av" id="sellerAv"></div>
+            <div>
+              <div class="seller-name" id="sellerName">Seller</div>
+            </div>
+          </div>
+          <div class="seller-meta" id="sellerMeta">Posted —</div>
+        </div>
+        <div class="listing-summary">
+          <div class="listing-title" id="itemTitle">Title: MK 0</div>
+        </div>
+        <div class="listing-description" id="itemDescription">
+          <div class="desc-text" id="descText">Description</div>
+          <button class="show-more-btn" id="showMoreBtn" style="display:none;" onclick="toggleDescription()">Show more</button>
+        </div>
+      </div>
+      <div class="action-buttons">
+        <button class="btn btn-outline" id="likeBtn" onclick="toggleItemLike()">
+          <span id="likeIcon">👍</span>
+        </button>
+        <button class="btn btn-outline" onclick="toggleComments()">
+          💬
+        </button>
+        <button class="btn btn-outline" onclick="sendMessage()">
+          ✉️
+        </button>
+      </div>
+    </div>
+    <div class="comments-card" id="commentsCard" style="display:none;">
+      <div class="comments-header">
+        <h3 style="text-align:center;">Comments</h3>
+        <span class="cmt-badge" id="cmtBadge">0</span>
+      </div>
+      <div id="commentThread" class="thread"></div>
+      <div class="cmt-input-wrap" id="commentForm">
+        <div class="cmt-input-row">
+          <div class="my-av" id="myCommentAvatar"></div>
+          <textarea id="commentInput" class="cmt-textarea" placeholder="Leave a comment..." rows="3"></textarea>
+        </div>
+        <div class="cmt-send-row">
+          <button type="button" class="btn-send" onclick="postComment(currentListing?.id)">Post Comment</button>
+        </div>
+      </div>
+    </div>
+  </main>
+  <div id="fullScreenModal" class="modal" style="display:none;" onclick="handleLbBackdrop(event)">
+    <div id="lbCounter"></div>
+    <div class="modal-content">
+      <img id="fullImg" src="" alt="">
+    </div>
+    <button class="close-btn" onclick="closeFullScreen()" title="Close">✕</button>
+    <button class="prev-btn" id="lbPrev" onclick="prevImage()" title="Previous">‹</button>
+    <button class="next-btn" id="lbNext" onclick="nextImage()" title="Next">›</button>
+    <div id="lbDots"></div>
+  </div>
+  <div id="toastWrap"></div>
+  <script>
+let currentListing=null,currentUser=null;
+function getToken(){return localStorage.getItem('token')||'';}
+function authH(){return{'Content-Type':'application/json','Authorization':'Bearer '+getToken()};}
+function escH(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function timeAgo(iso){if(!iso)return'';const m=Math.floor((Date.now()-new Date(iso))/60000);if(m<1)return'just now';if(m<60)return m+'m ago';const h=Math.floor(m/60);if(h<24)return h+'h ago';return Math.floor(h/24)+'d ago';}
+function showToast(msg,type='info'){const w=document.getElementById('toastWrap');const t=document.createElement('div');t.className='toast '+type;t.textContent=msg;w.appendChild(t);setTimeout(()=>t.remove(),3200);}
+function ini(name){return(name||'?').split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();}
+function buildAv(name,avatar,size){
+  size=size||36;
+  const ini=(name||'?').split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+  if(avatar) return `<div style="width:${size}px;height:${size}px;border-radius:50%;overflow:hidden;flex-shrink:0;"><img src="${avatar}" style="width:100%;height:100%;object-fit:cover;display:block;" alt="" onerror="this.parentElement.innerHTML='<div style=&quot;width:100%;height:100%;background:linear-gradient(135deg,#007bff,#0056b3);color:#fff;font-size:${Math.round(size*.32)}px;font-weight:800;display:flex;align-items:center;justify-content:center;&quot;>${ini}</div>'"></div>`;
+  return `<div style="width:${size}px;height:${size}px;border-radius:50%;background:linear-gradient(135deg,#007bff,#0056b3);color:#fff;font-size:${Math.round(size*.32)}px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${ini}</div>`;
+}
+function mkAv(id,name,avatar){ return buildAv(name,avatar,36); }
+
+function buildCommentTree(comments,parentId,lid,depth){
+  depth=depth||0;
+  if(depth > 10) return ''; // Prevent infinite recursion
+  const children=comments.filter(c=>String(c.parent_id||null)===String(parentId||null));
+  if(!children.length) return '';
+  return children.map(c=>{
+    const mine=currentUser&&String(c.userId)===String(currentUser.id);
+    const liked=currentUser&&(c.likedBy||[]).includes(currentUser.id);
+    const likeCount=c.likes||0;
+    const subTree=buildCommentTree(comments,c.id,lid,depth+1);
+    const indent=depth>0?`margin-left:${Math.min(depth*40,120)}px;`:'';
+    const avSize=depth>0?28:36;
+    return `<div class="cmt-block" style="${indent}">
+      <div class="cmt-row">
+        ${buildAv(c.user,null,avSize)}
+        <div style="flex:1;min-width:0;">
+          <div class="cmt-bubble">
+            <div class="cmt-author">${escH(c.user)}</div>
+            <div class="cmt-text">${escH(c.message)}</div>
+          </div>
+          <div class="cmt-footer">
+            <span class="cmt-time">${timeAgo(c.createdAt)}</span>
+            <button type="button" class="cmt-btn${liked?' liked-cmt':''}" onclick="toggleCmtLike(this,'${lid}',${c.id})">👍 ${likeCount>0?likeCount:''} Like</button>
+            ${currentUser?`<button type="button" class="cmt-btn" onclick="openReply(${c.id})">↩ Reply</button>`:''}
+            ${mine?`<button type="button" class="cmt-btn" onclick="editComment(${c.id},'${lid}')">Edit</button><button type="button" class="cmt-btn del" onclick="delCmt(${c.id},'${lid}')">Delete</button>`:''}
+            ${c.edited?`<span style="font-size:.65rem;color:#9ca3af;font-style:italic;">(edited)</span>`:''}
+          </div>
+        </div>
+      </div>
+      ${subTree?`<div style="margin-top:2px;">${subTree}</div>`:''}
+      <div class="reply-form" id="rf_${c.id}">
+        ${buildAv(currentUser?.name||'?',null,28)}
+        <textarea class="reply-input" id="ri_${c.id}" placeholder="Write a reply…" rows="1"></textarea>
+        <button type="button" class="reply-send" onclick="postReply('${lid}',${c.id})">Reply</button>
+        <button type="button" class="reply-cancel" onclick="closeReply(${c.id})">✕</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// Hash-based comment diffing — prevents full DOM wipe on every reload
+let _lastCommentsHash = '';
+
+function _hashComments(comments) {
+  return comments.map(c =>
+    c.id + ':' + c.message + ':' + (c.likes||0) + ':' + (c.likedBy||[]).join(',') + ':' + (c.edited?1:0) + ':' + (c.parent_id||'')
+  ).join('|');
+}
+
+function renderComments(comments,lid){
+  const thread=document.getElementById('commentThread');
+  if(!thread) return;
+  const badge=document.getElementById('cmtBadge');
+  const cnt=document.getElementById('cmtCount');
+  if(badge) badge.textContent=comments.length;
+  if(cnt) cnt.textContent=comments.length;
+
+  const EMPTY_HTML = '<div class="no-comments">No comments yet — be the first! 💬</div>';
+
+  if(comments.length === 0){
+    if(thread.innerHTML !== EMPTY_HTML) thread.innerHTML = EMPTY_HTML;
+    _lastCommentsHash = '';
+    return;
+  }
+
+  // Compute content hash — only rebuild DOM when data has actually changed
+  const hash = _hashComments(comments);
+  if(hash === _lastCommentsHash) return;  // Nothing changed — skip re-render entirely
+  _lastCommentsHash = hash;
+
+  // Preserve focused element id so we can restore focus after swap
+  const focusedId = document.activeElement ? document.activeElement.id : null;
+  thread.innerHTML = buildCommentTree(comments, null, lid, 0);
+  if(focusedId){
+    const el = document.getElementById(focusedId);
+    if(el) el.focus();
+  }
+}
+
+function openReply(pid){
+  document.querySelectorAll('.reply-form').forEach(f=>f.classList.remove('open'));
+  const f=document.getElementById(`rf_${pid}`);
+  if(f){f.classList.add('open');document.getElementById(`ri_${pid}`)?.focus();}
+}
+function closeReply(pid){document.getElementById(`rf_${pid}`)?.classList.remove('open');}
+
+let _postingComment = false;
+async function postComment(lid){
+  if(_postingComment) return;
+  const inp=document.getElementById('commentInput');
+  const txt=inp?.value.trim();
+  if(!txt){showToast('Comment cannot be empty','error');return;}
+  _postingComment = true;
+  try{
+    const res=await fetch(`${API}/listings/${lid}/comments`,{method:'POST',headers:authH(),body:JSON.stringify({message:txt,parent_id:null})});
+    if(!res.ok) throw new Error();
+    inp.value='';
+    _lastCommentsHash = '';    // Invalidate cache so re-render is forced
+    await loadComments(lid);
+    showToast('Comment posted ✓','success');
+  }catch{showToast('Could not post comment','error');}
+  finally{_postingComment = false;}
+}
+
+let _postingReply = false;
+async function postReply(lid,pid){
+  if(_postingReply) return;
+  const inp=document.getElementById(`ri_${pid}`);
+  const txt=inp?.value.trim();
+  if(!txt){showToast('Reply cannot be empty','error');return;}
+  _postingReply = true;
+  try{
+    const res=await fetch(`${API}/listings/${lid}/comments`,{method:'POST',headers:authH(),body:JSON.stringify({message:txt,parent_id:pid})});
+    if(!res.ok) throw new Error();
+    inp.value=''; closeReply(pid);
+    _lastCommentsHash = '';    // Invalidate cache
+    await loadComments(lid);
+    showToast('Reply posted ✓','success');
+  }catch{showToast('Could not post reply','error');}
+  finally{_postingReply = false;}
+}
+
+async function delCmt(cid,lid){
+  if(!confirm('Delete this comment?')) return;
+  try{
+    const res=await fetch(`${API}/comments/${cid}`,{method:'DELETE',headers:authH()});
+    if(!res.ok) throw new Error();
+    _lastCommentsHash = '';
+    await loadComments(lid);
+    showToast('Deleted','info');
+  }catch{showToast('Could not delete','error');}
+}
+
+async function editComment(cid,lid){
+  const newMsg=prompt('Edit your comment:');
+  if(!newMsg?.trim()) return;
+  try{
+    const res=await fetch(`${API}/comments/${cid}`,{method:'PUT',headers:authH(),body:JSON.stringify({message:newMsg.trim()})});
+    if(!res.ok) throw new Error();
+    _lastCommentsHash = '';
+    await loadComments(lid);
+    showToast('Updated ✓','success');
+  }catch{showToast('Could not update','error');}
+}
+
+// In-flight guard — prevents concurrent/duplicate comment fetches
+let _commentsLoading = false;
+// Lazy-load flag — comments only fetched on first toggle open
+let _commentsLoaded  = false;
+
+async function loadComments(lid){
+  if(!lid) return;
+  if(_commentsLoading) return;           // Deduplicate concurrent calls
+  _commentsLoading = true;
+  try{
+    const res = await fetch(`${API}/listings/${encodeURIComponent(lid)}/comments`);
+    if(!res.ok) throw new Error();
+    const comments = await res.json();
+    _commentsLoaded = true;
+    renderComments(comments,lid);
+    showCommentInput();
+    // NOTE: Never force commentsCard.style.display here —
+    // visibility is owned exclusively by toggleComments()
+  }catch{
+    // Silent fail — don't hide the card if it was already open
+  }finally{
+    _commentsLoading = false;
+  }
+}
+
+function showCommentInput(){
+  const form = document.getElementById('commentForm');
+  if(!form) return;
+  form.style.display = currentUser ? 'block' : 'none';
+  const avatar = document.getElementById('myCommentAvatar');
+  if(avatar) avatar.innerHTML = currentUser ? buildAv(currentUser.name,null,36) : '';
+}
+
+async function toggleCmtLike(btn,lid,cid){
+  if(!currentUser){showToast('Sign in to like','info');return;}
+  const likesNumber = document.getElementById('likesNumber');
+  const currentLikes = likesNumber ? parseInt(likesNumber.textContent) || 0 : 0;
+  const wasLiked = btn.classList.contains('liked-cmt');
+  
+  try{
+    const res=await fetch(`${API}/comments/${cid}/like`,{method:'POST',headers:authH()});
+    if(!res.ok) throw new Error();
+    const data=await res.json();
+    btn.className='cmt-btn'+(data.liked?' liked-cmt':'');
+    btn.innerHTML=`👍 ${data.likes>0?data.likes:''} Like`;
+    
+    // Update total likes count based on state change
+    if(likesNumber) {
+      if (wasLiked && !data.liked) {
+        likesNumber.textContent = currentLikes - 1; // unliked
+      } else if (!wasLiked && data.liked) {
+        likesNumber.textContent = currentLikes + 1; // liked
+      }
+    }
+  }catch{
+    const liked=btn.classList.contains('liked-cmt');
+    btn.className='cmt-btn'+(liked?'':' liked-cmt');
+    const m=btn.textContent.match(/\d+/);const n=m?parseInt(m[0]):0;
+    btn.innerHTML=`👍 ${liked?Math.max(0,n-1)||'':n+1} Like`;
+    
+    // Update total likes count for offline mode
+    if(likesNumber) {
+      if (wasLiked && !liked) {
+        likesNumber.textContent = currentLikes - 1; // unliked
+      } else if (!wasLiked && liked) {
+        likesNumber.textContent = currentLikes + 1; // liked
+      }
+    }
+  }
+}
+
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&!e.shiftKey){
+    const target = e.target;
+    if(target.id==='commentInput'){
+      e.preventDefault();
+      if(!_postingComment) postComment(currentListing?.id);
+      return;
+    }
+    if(target.classList.contains('reply-input')){
+      e.preventDefault();
+      if(!_postingReply){
+        const replyId = target.id.replace(/^ri_/, '');
+        const listingId = currentListing?.id;
+        if(listingId && replyId) postReply(listingId, Number(replyId));
+      }
+    }
+  }
+});
+
+function showErrorPage(message){
+  document.getElementById('detailGrid').innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:80px 20px;">
+    <h2 style="font-size:1.5rem;margin-bottom:10px;">${escH(message)}</h2>
+    <p style="color:#6b7280;margin-bottom:16px;">Try refreshing or go back to browse listings.</p>
+    <a href="browse.html" class="btn btn-blue">Browse Listings</a>
+  </div>`;
+}
+
+function renderListing(listing){
+  const images = listing.images || [];
+  const currentImageIndex = 0;
+  window.currentImages = images;
+  window.currentImageIndex = currentImageIndex;
+
+  const imageHtml = images.length
+    ? `<img src="${escH(images[0])}" alt="${escH(listing.title)}" onerror="this.outerHTML='<div class=&quot;img-placeholder&quot;><svg width=&quot;48&quot; height=&quot;48&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#c8d1dc&quot; stroke-width=&quot;1&quot;><rect x=&quot;3&quot; y=&quot;3&quot; width=&quot;18&quot; height=&quot;18&quot; rx=&quot;2&quot;/><circle cx=&quot;8.5&quot; cy=&quot;8.5&quot; r=&quot;1.5&quot;/><polyline points=&quot;21 15 16 10 5 21&quot;/></svg><div>Image failed to load</div></div>'" loading="lazy">`
+    : `<div class="img-placeholder"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#c8d1dc" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><div>No photo</div></div>`;
+
+  const dotsHtml = images.length > 1
+    ? images.map((_, i) => `<div class="dot${i === 0 ? ' active' : ''}" onclick="changeImage(${i})"></div>`).join('')
+    : '';
+
+  const sellerName = listing.sellerName || 'Seller';
+  const price = typeof listing.price === 'number' ? listing.price : Number(listing.price || 0);
+  const condition = listing.condition ? listing.condition.replace(/_/g,' ') : 'Good';
+  const description = listing.description || 'No description provided.';
+  const descLines = description.split('\n').length;
+  const showMore = descLines > 2 || description.length > 200;
+  const shortDesc = showMore ? description.split('\n').slice(0, 2).join('\n') + (description.length > 200 ? '...' : '') : description;
+  const shortDescLabel = 'Description: ' + shortDesc;
+  const fullDescLabel = 'Description: ' + description;
+
+  document.title = `${listing.title} — UniTrade`;
+
+  document.getElementById('mainImg').innerHTML = imageHtml;
+  document.getElementById('dotsContainer').innerHTML = dotsHtml;
+  document.getElementById('dotsContainer').style.display = images.length > 1 ? 'flex' : 'none';
+
+  document.getElementById('itemTitle').textContent = `${listing.title}: MK ${price.toLocaleString()}`;
+  document.getElementById('itemCondition').textContent = condition;
+  document.getElementById('sellerName').textContent = sellerName;
+  document.getElementById('sellerMeta').textContent = `Posted ${timeAgo(listing.createdAt)}`;
+  const avEl = document.getElementById('sellerAv');
+  const ini = (sellerName || '?').split(' ').map(w => w[0]).join('').substring(0,2).toUpperCase();
+  if(listing.sellerAvatar){
+    avEl.innerHTML = `<img src="${listing.sellerAvatar}" alt="${escH(sellerName)}" onerror="this.parentElement.innerHTML='${ini}'">`;
+  } else {
+    avEl.textContent = ini;
+  }
+
+  document.getElementById('descText').textContent = shortDescLabel;
+  document.getElementById('showMoreBtn').style.display = showMore ? 'block' : 'none';
+  window.fullDescription = fullDescLabel;
+
+  // Update like button
+  const likeBtn = document.getElementById('likeBtn');
+  const likeCount = document.getElementById('likeCount');
+  const liked = currentUser && (listing.likedBy || []).includes(currentUser.id);
+  likeBtn.classList.toggle('liked', liked);
+  likeCount.textContent = listing.likes || 0;
+}
+
+// Single-run guard using a boolean (set synchronously before async work)
+let _listingFetchStarted = false;
+async function loadListing(){
+  if (_listingFetchStarted) return;
+  _listingFetchStarted = true;
+
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id');
+  if(!id){
+    showErrorPage('Missing listing ID');
+    return;
+  }
+  try{
+    const res = await fetch(`${API}/listings/${encodeURIComponent(id)}`);
+    if(!res.ok){
+      throw new Error(res.status===404 ? 'Listing not found' : 'Unable to load listing');
+    }
+    const listing = await res.json();
+    currentListing = listing;
+    try{ currentUser = JSON.parse(localStorage.getItem('user')||'null'); }catch(e){}
+    renderListing(listing);
+    showCommentInput();
+    // Comments load lazily when the user first opens the section via toggleComments().
+    // Do NOT call loadComments() here — it caused the card to auto-show and
+    // triggered an extra network round-trip on every page load.
+  }catch(err){
+    showErrorPage(err.message || 'Could not load listing');
+  }
+}
+
+let lbTouchStartX = 0;
+
+function renderLightbox() {
+  const imgs = window.currentImages || [];
+  const idx  = window.currentImageIndex || 0;
+  const img  = document.getElementById('fullImg');
+
+  // Fade transition
+  img.classList.add('lb-fade');
+  setTimeout(() => {
+    img.src = imgs[idx];
+    img.classList.remove('lb-fade');
+  }, 120);
+
+  // Counter
+  const counter = document.getElementById('lbCounter');
+  if (counter) counter.textContent = imgs.length > 1 ? (idx + 1) + ' / ' + imgs.length : '';
+
+  // Nav buttons
+  const prev = document.getElementById('lbPrev');
+  const next = document.getElementById('lbNext');
+  if (prev) prev.disabled = idx === 0;
+  if (next) next.disabled = idx === imgs.length - 1;
+
+  // Dots
+  const dots = document.getElementById('lbDots');
+  if (dots && imgs.length > 1) {
+    dots.innerHTML = '';
+    imgs.forEach((_, i) => {
+      const d = document.createElement('button');
+      d.className = 'lb-dot' + (i === idx ? ' active' : '');
+      d.onclick = (e) => { e.stopPropagation(); window.currentImageIndex = i; renderLightbox(); changeImage(i); };
+      dots.appendChild(d);
+    });
+  } else if (dots) dots.innerHTML = '';
+}
+
+function openFullScreen() {
+  if (!window.currentImages || window.currentImages.length === 0) return;
+  const modal = document.getElementById('fullScreenModal');
+  modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  renderLightbox();
+  // Touch swipe
+  modal.addEventListener('touchstart', e => { lbTouchStartX = e.changedTouches[0].screenX; }, { passive: true });
+  modal.addEventListener('touchend', e => {
+    const diff = lbTouchStartX - e.changedTouches[0].screenX;
+    if (Math.abs(diff) > 50) { if (diff > 0) nextImage(); else prevImage(); }
+  }, { passive: true });
+}
+
+function closeFullScreen() {
+  document.getElementById('fullScreenModal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function handleLbBackdrop(e) {
+  if (e.target === document.getElementById('fullScreenModal')) closeFullScreen();
+}
+
+function prevImage() {
+  if (!window.currentImages || window.currentImages.length <= 1) return;
+  window.currentImageIndex = Math.max(0, (window.currentImageIndex || 0) - 1);
+  renderLightbox();
+  changeImage(window.currentImageIndex);
+}
+
+function nextImage() {
+  if (!window.currentImages || window.currentImages.length <= 1) return;
+  window.currentImageIndex = Math.min(window.currentImages.length - 1, (window.currentImageIndex || 0) + 1);
+  renderLightbox();
+  changeImage(window.currentImageIndex);
+}
+
+function changeImage(index) {
+  window.currentImageIndex = index;
+  const img = document.querySelector('#mainImg img');
+  if (img) img.src = window.currentImages[index];
+  document.querySelectorAll('.dot').forEach((dot, i) => dot.classList.toggle('active', i === index));
+}
+
+// Keyboard nav for lightbox
+document.addEventListener('keydown', e => {
+  const modal = document.getElementById('fullScreenModal');
+  if (!modal || modal.style.display === 'none') return;
+  if (e.key === 'ArrowRight') nextImage();
+  else if (e.key === 'ArrowLeft') prevImage();
+  else if (e.key === 'Escape') closeFullScreen();
+});
+
+function toggleDescription() {
+  const descText = document.getElementById('descText');
+  const showMoreBtn = document.getElementById('showMoreBtn');
+  if (showMoreBtn.textContent === 'Show more') {
+    descText.textContent = window.fullDescription;
+    showMoreBtn.textContent = 'Show less';
+  } else {
+    const source = window.fullDescription.replace(/^Descript: /, '');
+    const shortDesc = source.split('\n').slice(0, 2).join('\n') + (source.length > 200 ? '...' : '');
+    descText.textContent = 'Descript: ' + shortDesc;
+    showMoreBtn.textContent = 'Show more';
+  }
+}
+
+function toggleComments() {
+  const commentsCard = document.getElementById('commentsCard');
+  const isHidden = !commentsCard.style.display || commentsCard.style.display === 'none';
+  if (isHidden) {
+    commentsCard.style.display = 'block';
+    // Lazy-load: only hit the server the first time the section is opened
+    if (!_commentsLoaded && !_commentsLoading && currentListing?.id) {
+      loadComments(currentListing.id);
+    }
+  } else {
+    commentsCard.style.display = 'none';
+  }
+}
+
+async function sendMessage() {
+  if(!currentListing?.userId){
+    showToast('Seller chat unavailable','error');
+    return;
+  }
+  if(String(currentListing.userId)===String(currentUser?.id)){
+    showToast('This is your own listing','info');
+    return;
+  }
+  if(!getToken()){
+    showToast('Sign in to message the seller','info');
+    window.location.href = 'login.html?redirect=listing.html%3Fid%3D' + currentListing.id;
+    return;
+  }
+  try{
+    const res = await fetch(`${API}/conversations`,{
+      method:'POST',
+      headers: authH(),  // ← was missing Authorization header — fixed
+      body: JSON.stringify({listingId: currentListing.id, sellerId: currentListing.userId})
+    });
+    const text = await res.text();
+    let data;
+    try{ data = JSON.parse(text); }
+    catch(parseErr){ throw new Error('Server error: invalid response'); }
+    if(!res.ok){ throw new Error(data.message||'Unable to open chat'); }
+    window.location.href = `inbox.html?conversationId=${data.conversation.id}`;
+  }catch(e){
+    showToast(e.message||'Could not open chat','error');
+  }
+}
+
+async function toggleItemLike() {
+  if (!currentUser) {
+    showToast('Sign in to like listings', 'info');
+    return;
+  }
+  const likeBtn = document.getElementById('likeBtn');
+  const likeCount = document.getElementById('likeCount');
+  const wasLiked = likeBtn.classList.contains('liked');
+  const newLiked = !wasLiked;
+  const newCount = (currentListing.likes || 0) + (newLiked ? 1 : -1);
+
+  try {
+    const res = await fetch(`${API}/listings/${currentListing.id}/like`, { method: 'POST', headers: authH() });
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    likeBtn.classList.toggle('liked', data.liked);
+    likeCount.textContent = data.likes;
+    currentListing.likes = data.likes;
+    currentListing.likedBy = data.likedBy;
+    showToast(newLiked ? 'Liked!' : 'Unliked', 'success');
+  } catch (e) {
+    showToast('Could not update like', 'error');
+  }
+}
+
+// Only trigger once the DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', loadListing, { once: true });
+} else {
+  loadListing();
+}
+  </script>
+</body>
+</html>

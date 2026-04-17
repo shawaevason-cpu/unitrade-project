@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Terms & Conditions - UniTrade</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--primary:#007bff;--primary-hover:#0056b3;--primary-dim:rgba(0,123,255,.08);--secondary:#28a745;--danger:#dc2626;--bg-page:#f4f6f9;--bg-card:#fff;--bg-tertiary:#f8f9fa;--border:#e2e8f0;--text-primary:#1a1a2e;--text-secondary:#555770;--text-muted:#9ca3af;--radius:8px;--radius-lg:12px;--radius-xl:18px;--font-display:'Cormorant Garamond',Georgia,serif;--font-body:'Syne',system-ui,sans-serif;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg-page);color:var(--text-primary);font-family:var(--font-body);font-size:15px;line-height:1.6;min-height:100vh;}
+.navbar{display:flex;justify-content:space-between;align-items:center;padding:10px 20px;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.1);top:0;z-index:1000;gap:16px;}
+.logo{font-size:22px;font-weight:700;color:#007bff;text-decoration:none;flex-shrink:0;}.logo span{color:#333;}
+.nav-links{display:flex;gap:4px;align-items:center;}
+.nav-link{padding:7px 10px;border-radius:var(--radius);text-decoration:none;color:#555;font-size:.8rem;font-weight:500;transition:background .2s;display:flex;align-items:center;gap:4px;}.nav-link:hover{background:#f0f0f0;color:#007bff;}
+.nav-av{width:34px;height:34px;border-radius:50%;background:var(--primary-dim);color:var(--primary);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;text-decoration:none;border:2px solid transparent;overflow:hidden;flex-shrink:0;}
+.nav-av img{width:100%;height:100%;object-fit:cover;}
+.main{max-width:760px;margin:0 auto;padding:40px 20px 80px;}
+.legal-header{text-align:center;margin-bottom:40px;padding-bottom:28px;border-bottom:2px solid var(--border);}
+.legal-header h1{font-family:var(--font-display);font-size:2.5rem;font-weight:700;margin-bottom:6px;}
+.legal-header p{color:var(--text-secondary);font-size:.9rem;}
+.effective-pill{display:inline-block;background:var(--bg-tertiary);border:1px solid var(--border);border-radius:20px;padding:4px 14px;font-size:.78rem;color:var(--text-secondary);margin-top:10px;}
+.highlight-box{background:linear-gradient(135deg,#eff6ff,#dbeafe);border-left:4px solid var(--primary);padding:14px 16px;border-radius:0 var(--radius) var(--radius) 0;margin:16px 0;font-size:.85rem;color:#1e3a5f;line-height:1.6;}
+.warning-box{background:linear-gradient(135deg,#fef3c7,#fde68a);border-left:4px solid #f59e0b;padding:14px 16px;border-radius:0 var(--radius) var(--radius) 0;margin:16px 0;font-size:.85rem;color:#78350f;line-height:1.6;}
+.legal-section{margin-bottom:36px;}
+.legal-section h2{font-family:var(--font-display);font-size:1.35rem;font-weight:600;color:var(--primary);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--bg-tertiary);}
+.legal-section h3{font-size:.95rem;font-weight:700;margin:16px 0 8px;color:var(--text-primary);}
+.legal-section p{color:var(--text-secondary);line-height:1.8;margin-bottom:10px;font-size:.88rem;}
+.legal-section ul,.legal-section ol{padding-left:22px;margin-bottom:14px;}
+.legal-section li{color:var(--text-secondary);line-height:1.8;margin-bottom:6px;font-size:.88rem;}
+.prohibited-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;background:#fee2e2;border-radius:var(--radius);padding:14px;margin:12px 0;}
+.prohibited-grid li{color:#7f1d1d;font-size:.82rem;list-style:disc;margin-left:14px;line-height:1.6;}
+.fee-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.85rem;}
+.fee-table th{text-align:left;padding:10px 14px;background:var(--bg-tertiary);border:1px solid var(--border);font-weight:700;color:var(--text-secondary);font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;}
+.fee-table td{padding:10px 14px;border:1px solid var(--border);color:var(--text-secondary);line-height:1.5;}
+.fee-table tr:nth-child(even) td{background:var(--bg-tertiary);}
+.fee-table .fee-val{font-family:var(--font-display);font-weight:700;color:var(--primary);font-size:.95rem;}
+.accept-box{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-xl);padding:28px;text-align:center;margin-top:40px;}
+.accept-box p{color:var(--text-secondary);font-size:.85rem;margin-bottom:18px;line-height:1.6;}
+.accept-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 32px;background:var(--primary);color:#fff;border:none;border-radius:var(--radius-lg);font-family:var(--font-body);font-size:.85rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;box-shadow:0 2px 8px rgba(0,123,255,.25);transition:background .2s,transform .15s;}.accept-btn:hover:not(:disabled){background:var(--primary-hover);transform:translateY(-1px);}.accept-btn:disabled{background:var(--secondary);cursor:default;pointer-events:none;}
+.accept-box .note{font-size:.72rem;color:var(--text-muted);margin-top:10px;}
+footer{background:#fff;border-top:1px solid var(--border);padding:20px;text-align:center;font-size:.75rem;color:var(--text-muted);}
+#toastWrap{position:fixed;bottom:20px;right:20px;display:flex;flex-direction:column;gap:8px;z-index:9999;pointer-events:none;}
+.toast{color:#fff;padding:12px 18px;border-radius:10px;font-size:.82rem;font-weight:500;box-shadow:0 4px 16px rgba(0,0,0,.15);animation:sIn .3s ease;max-width:280px;}
+.toast.success{background:#166534;}.toast.error{background:var(--danger);}.toast.info{background:var(--primary);}
+@keyframes sIn{from{opacity:0;transform:translateX(30px);}to{opacity:1;transform:translateX(0);}}
+@media(max-width:600px){.main{padding:24px 14px 60px;}.prohibited-grid{grid-template-columns:1fr;}.legal-header h1{font-size:1.8rem;}}
+</style>
+  <link rel="stylesheet" href="../css/ut.css">
+  <script src="../js/navbar.js"></script>
+</head>
+<body>
+  <script>document.addEventListener('DOMContentLoaded',()=>renderNavbar('terms',{showLogin:false}));</script>
+
+
+<main class="main">
+  <div class="legal-header">
+    <h1>Terms &amp; Conditions</h1>
+    <p>Rules for using UniTrade Marketplace</p>
+    <span class="effective-pill">Effective Date: April 3, 2026</span>
+  </div>
+
+  <div class="highlight-box">
+    <strong>Summary:</strong> Be honest, be safe, be respectful. UniTrade is a community marketplace for verified LUANAR students. By using our platform, you agree to these terms. Violations may result in account suspension or permanent ban.
+  </div>
+
+  <div class="legal-section">
+    <h2>1. Eligibility &amp; Account</h2>
+    <h3>1.1 Who Can Use UniTrade</h3>
+    <ul>
+      <li>Currently enrolled students at LUANAR from all campuses</li>
+      <li>Your Student ID will be used <strong>only</strong> to recognise you as a current student and is stored securely</li>
+      <li>Must provide a valid email address for verification</li>
+      <li>One account per person — duplicate accounts are prohibited</li>
+    </ul>
+    <h3>1.2 Account Responsibilities</h3>
+    <ul>
+      <li>Maintain accurate profile information at all times</li>
+      <li>Keep your password secure and do not share it</li>
+      <li>You are responsible for all activity under your account</li>
+      <li>Report unauthorised access immediately via the Report page</li>
+    </ul>
+  </div>
+
+  <div class="legal-section">
+    <h2>2. Listings &amp; Transactions</h2>
+    <h3>2.1 Posting Rules</h3>
+    <ul>
+      <li>All listings must include accurate descriptions and real photos of the actual item</li>
+      <li>Prices must be stated in Malawian Kwacha (MK)</li>
+      <li>No misleading titles, clickbait, or exaggerated claims</li>
+      <li>Listings expire automatically after <strong>30 days</strong> and can be renewed for an additional fee</li>
+      <li>Listing fee is <strong>a percentage of your sale price</strong> (see Fee Schedule below) — non-refundable</li>
+    </ul>
+
+    <div class="warning-box">
+      <strong>⚠️ Strictly Prohibited Items</strong> — Selling these will result in immediate ban and possible referral to university administration or legal action:
+    </div>
+    <ul class="prohibited-grid">
+      <li>Counterfeit goods</li>
+      <li>Stolen property</li>
+      <li>Weapons or explosives</li>
+      <li>Drugs or paraphernalia</li>
+      <li>Adult content/services</li>
+      <li>Academic cheating services</li>
+      <li>Personal information of others</li>
+      <li>Hazardous materials</li>
+    </ul>
+
+    <h3>2.2 Transaction Guidelines</h3>
+    <ul>
+      <li>All negotiations must happen through UniTrade (comments) or WhatsApp</li>
+      <li>Cash transactions are at your own risk — meet in safe, public locations on campus</li>
+      <li>UniTrade is not responsible for transaction disputes between users</li>
+      <li>No off-platform payment schemes to circumvent listing fees</li>
+    </ul>
+  </div>
+
+  <div class="legal-section">
+    <h2>3. User Conduct</h2>
+    <ul>
+      <li>No harassment, discrimination, or hate speech in any form</li>
+      <li>No spamming or excessive messaging to other users</li>
+      <li>No creation of fake listings or fake accounts</li>
+      <li>No intentionally misleading buyers about item condition or authenticity</li>
+      <li>No no-shows without prior communication with the other party</li>
+      <li>No attempts to circumvent platform fees</li>
+      <li>No sharing of other users' private or contact information</li>
+      <li>Be respectful and professional in all communications</li>
+      <li>No profanity or offensive language in listings or comments</li>
+      <li>No external links in listing descriptions (except verified partners)</li>
+    </ul>
+  </div>
+
+  <div class="legal-section">
+    <h2>4. Fee Schedule &amp; Payments</h2>
+    <h3>4.1 Listing Tiers</h3>
+    <table class="fee-table">
+      <thead>
+        <tr><th>Tier</th><th>Fee</th><th>Benefit</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Standard</strong></td><td class="fee-val">10% of sale price</td><td>Listed in regular search results</td></tr>
+        <tr><td><strong>Featured</strong></td><td class="fee-val">13% of sale price</td><td>Highlighted on the homepage Featured section</td></tr>
+        <tr><td><strong>Boost</strong></td><td class="fee-val">15% of sale price</td><td>Pinned to top of category listing</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:.78rem;color:var(--text-muted);">Example: A MK 50,000 item at Standard tier incurs a listing fee of MK 5,000. The fee is due before the listing is published.</p>
+
+    <h3>4.2 Payment Methods</h3>
+    <ul>
+      <li>TNM Mpamba — +265 883 752 517</li>
+      <li>Airtel Money — +265 995 255 593</li>
+      <li>National Bank of Malawi transfer — Account 1011173922, UniTrade Ltd, Lilongwe Branch</li>
+    </ul>
+    <ul>
+      <li>All payments are non-refundable once a listing is published</li>
+      <li>A valid transaction reference number must be provided when posting</li>
+      <li>Failed or disputed payments must be resolved within 7 days</li>
+    </ul>
+  </div>
+
+  <div class="legal-section">
+    <h2>5. Safety &amp; Liability</h2>
+    <div class="highlight-box">
+      <strong>Always:</strong> Meet in public campus locations, bring a friend, inspect items before paying, and trust your instincts. Never share banking PINs or passwords.
+    </div>
+    <ul>
+      <li>UniTrade provides safety guidelines but is not liable for in-person meetings or transactions</li>
+      <li>Report suspicious behaviour immediately using the Report page</li>
+      <li>Use WhatsApp voice/video call to verify identity before meeting a stranger</li>
+      <li>UniTrade is a marketplace platform — not a chatting platform</li>
+      <li>We do not guarantee item quality, authenticity, or seller reliability</li>
+      <li>Users are responsible for verifying items before purchasing</li>
+    </ul>
+  </div>
+
+  <div class="legal-section">
+    <h2>6. Content &amp; Intellectual Property</h2>
+    <ul>
+      <li>You retain ownership of content (photos, descriptions) you post</li>
+      <li>You grant UniTrade a licence to display your content on the platform</li>
+      <li>Do not post copyrighted material (music, film, software) without permission</li>
+      <li>UniTrade logo and branding are protected — do not reproduce without permission</li>
+    </ul>
+  </div>
+
+  <div class="legal-section">
+    <h2>7. Account Termination</h2>
+    <h3>7.1 We May Suspend or Ban You For:</h3>
+    <ul>
+      <li>Violating any section of these terms</li>
+      <li>Fraudulent, deceptive, or illegal activity</li>
+      <li>Multiple verified complaints from other users</li>
+      <li>No longer being an enrolled student at LUANAR</li>
+    </ul>
+    <h3>7.2 Effect of Termination</h3>
+    <ul>
+      <li>All active listings will be removed immediately</li>
+      <li>Outstanding fees remain due</li>
+      <li>You may not create new accounts after a ban</li>
+      <li>Certain data is retained for legal compliance per Malawian data laws</li>
+    </ul>
+  </div>
+
+  <div class="legal-section">
+    <h2>8. Dispute Resolution</h2>
+    <ul>
+      <li>First, try to resolve disputes directly with the other party via WhatsApp or comments</li>
+      <li>Unresolved disputes may be escalated to university administration (LUANAR Student Affairs)</li>
+      <li>Legal disputes are governed by the laws of Malawi, jurisdiction of Lilongwe Courts</li>
+    </ul>
+  </div>
+
+  <div class="legal-section">
+    <h2>9. Changes to Terms</h2>
+    <p>We may update these terms. Material changes will be notified via platform notifications and email at least 7 days before taking effect. Continued use of the platform after changes constitutes acceptance.</p>
+  </div>
+
+  <div class="legal-section">
+    <h2>10. Contact</h2>
+    <ul>
+      <li>Email: <strong>support@unitrade.luanar.ac.mw</strong></li>
+      <li>Address: Innovation Hub, LUANAR Main Campus, Lilongwe</li>
+      <li>Response time: 48–72 hours (business days)</li>
+    </ul>
+  </div>
+
+  <div class="accept-box">
+    <p>By clicking below, you acknowledge that you have read, understood, and agree to be bound by these Terms &amp; Conditions and the <a href="privacy.html" style="color:var(--primary);font-weight:600;">Privacy Policy</a>.</p>
+    <button class="accept-btn" id="acceptBtn" onclick="acceptTerms()">I Accept Terms &amp; Conditions</button>
+    <p class="note">Last updated: April 3, 2026</p>
+  </div>
+</main>
+
+  <footer class="ut-footer">
+    <div class="ut-footer-inner">
+      <div class="ut-footer-brand">
+        <a href="index.html" class="ft-logo">
+          <div class="ft-logo-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+          <span class="ft-logo-name">Uni<span>Trade</span></span>
+        </a>
+        <p>The campus marketplace for LUANAR students. Buy, sell and connect safely on campus.</p>
+        <div class="ft-social">
+          <a href="#" title="Facebook"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+          <a href="#" title="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg></a>
+          <a href="#" title="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+          <a href="mailto:sammymisanjo@gmail.com" title="Email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></a>
+        </div>
+      </div>
+      
+      <div class="ut-footer-col">
+        <h5>Help</h5>
+        <a href="about.html">About Us</a>
+        <a href="feedback.html">Feedback</a>
+      </div>
+      <div class="ut-footer-col">
+        <h5>Account</h5>
+        <a href="login.html">Sign In</a>
+        <a href="register.html">Create Account</a>
+      </div>
+    </div>
+    <div class="ut-footer-bottom">
+      <span>&copy; 2026 UniTrade &mdash; Built for students, by student.</span>
+      <span><a href="terms.html">Terms</a> &nbsp;&middot;&nbsp; <a href="privacy.html">Privacy</a> &nbsp;&middot;&nbsp; <a href="safety.html">Safety</a></span>
+    </div>
+  </footer>
+<div id="toastWrap"></div>
+
+<script>
+(function(){
+  let user=null;try{user=JSON.parse(localStorage.getItem('user')||'null');}catch{}
+  const token=localStorage.getItem('token')||'',li=!!token&&!!user;
+  const ini=(n)=>(n||'U').split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+  const pBtn=li?`<a href="profile.html" class="nav-av" title="${user.name}">${user.avatar?`<img src="${user.avatar}">`:`<span>${ini(user.name)}</span>`}</a>`:`<a href="login.html" style="padding:7px 12px;border-radius:8px;background:#007bff;color:#fff;text-decoration:none;font-size:.8rem;font-weight:700;">Sign In</a>`;
+  const nb=document.querySelector('.navbar');if(!nb)return;
+  nb.innerHTML=`<a href="index.html" class="logo">Uni<span>Trade</span></a><div class="nav-links"><a href="browse.html" class="nav-link">Browse</a><a href="saved.html" class="nav-link">Saved</a><a href="notifications.html" class="nav-link">Notifications</a>${pBtn}</div>`;
+})();
+
+(function(){
+  const btn=document.getElementById('acceptBtn');
+  if(localStorage.getItem('termsAccepted')){btn.textContent='Terms Already Accepted ✓';btn.disabled=true;}
+})();
+
+function showToast(msg,t='info'){const w=document.getElementById('toastWrap');const el=document.createElement('div');el.className='toast '+t;el.textContent=msg;w.appendChild(el);setTimeout(()=>el.remove(),3200);}
+
+function acceptTerms(){
+  localStorage.setItem('termsAccepted','true');
+  localStorage.setItem('termsAcceptedDate',new Date().toISOString());
+  const btn=document.getElementById('acceptBtn');
+  btn.textContent='Terms Accepted ✓';btn.disabled=true;
+  showToast('Terms accepted. Welcome to UniTrade!','success');
+}
+</script>
+</body>
+</html>

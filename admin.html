@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Admin — UniTrade</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/ut.css">
+<script src="../js/config.js"></script>
+<script src="../js/utils.js"></script>
+<script src="../js/navbar.js"></script>
+<style>
+:root{--primary:#007bff;--primary-dark:#0056b3;--primary-dim:rgba(0,123,255,.08);--danger:#dc2626;--warning:#f59e0b;--bg:#f4f6f9;--bg-card:#fff;--bg-muted:#f8f9fa;--border:#e2e8f0;--text:#1a1a2e;--text-2:#555770;--text-m:#9ca3af;--r:8px;--r-lg:12px;--r-xl:18px;--font-d:'Cormorant Garamond',Georgia,serif;--font-b:'Syne',system-ui,sans-serif;}
+body{background:var(--bg);font-family:var(--font-b);color:var(--text);}
+.layout{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 60px);}
+.sidebar{background:var(--bg-card);border-right:1px solid var(--border);padding:20px 12px;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto;}
+.sidebar-title{font-size:.65rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--text-m);padding:0 10px;margin-bottom:8px;margin-top:16px;}
+.sidebar-title:first-child{margin-top:0;}
+.nav-item{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:var(--r);font-size:.82rem;font-weight:600;color:var(--text-2);cursor:pointer;transition:background .15s,color .15s;border:none;background:none;width:100%;text-align:left;}
+.nav-item:hover{background:var(--bg-muted);color:var(--text);}
+.nav-item.active{background:var(--primary-dim);color:var(--primary);}
+.nav-item svg{width:16px;height:16px;flex-shrink:0;}
+.nav-badge{margin-left:auto;background:var(--danger);color:#fff;font-size:.6rem;font-weight:800;padding:1px 5px;border-radius:9px;min-width:18px;text-align:center;}
+.content{padding:28px 28px 80px;overflow-x:hidden;min-width:0;}
+.page-title{font-family:var(--font-d);font-size:2rem;font-weight:600;margin-bottom:4px;}
+.page-sub{font-size:.85rem;color:var(--text-2);margin-bottom:24px;}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px;}
+.stat-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px 18px;position:relative;overflow:hidden;}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.stat-card.blue::before{background:var(--primary);}
+.stat-card.green::before{background:#16a34a;}
+.stat-card.amber::before{background:#d97706;}
+.stat-card.red::before{background:var(--danger);}
+.stat-label{font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-m);margin-bottom:6px;}
+.stat-value{font-family:var(--font-d);font-size:1.9rem;font-weight:700;line-height:1.1;}
+.stat-value.blue{color:var(--primary);}
+.stat-value.green{color:#16a34a;}
+.stat-value.amber{color:#d97706;}
+.stat-value.red{color:var(--danger);}
+.stat-sub{font-size:.72rem;color:var(--text-m);margin-top:4px;}
+.section{display:none;}
+.section.active{display:block;}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px;flex-wrap:wrap;}
+.section-head h2{font-family:var(--font-d);font-size:1.4rem;font-weight:600;}
+.table-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-xl);overflow:hidden;}
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;}
+th{padding:10px 14px;font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-m);background:var(--bg-muted);border-bottom:1px solid var(--border);text-align:left;white-space:nowrap;}
+td{padding:12px 14px;font-size:.82rem;color:var(--text);border-bottom:1px solid var(--border);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:#fafbfc;}
+.td-name{font-weight:600;}
+.td-muted{color:var(--text-m);}
+.td-mono{font-family:monospace;font-size:.78rem;}
+.pill{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;}
+.pill-open{background:#fef3c7;color:#92400e;}
+.pill-resolved{background:#dcfce7;color:#166534;}
+.pill-closed{background:#f3f4f6;color:#374151;}
+.pill-active{background:#dcfce7;color:#166534;}
+.pill-sold{background:#dbeafe;color:#1e40af;}
+.pill-expired{background:#f3f4f6;color:#6b7280;}
+.pill-banned{background:#fee2e2;color:#991b1b;}
+.pill-ok{background:#dcfce7;color:#166534;}
+.pill-pending{background:#fef3c7;color:#92400e;}
+.pill-completed{background:#dcfce7;color:#166534;}
+.pill-disputed{background:#fee2e2;color:#991b1b;}
+.pill-confirmed{background:#dbeafe;color:#1e40af;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:7px 14px;border-radius:var(--r);font-family:var(--font-b);font-size:.75rem;font-weight:700;border:none;cursor:pointer;transition:all .15s;text-decoration:none;white-space:nowrap;}
+.btn-primary{background:var(--primary);color:#fff;}
+.btn-primary:hover{background:var(--primary-dark);}
+.btn-outline{background:transparent;color:var(--text-2);border:1px solid var(--border);}
+.btn-outline:hover{background:var(--bg-muted);}
+.btn-red{background:transparent;color:var(--danger);border:1px solid rgba(220,38,38,.3);}
+.btn-red:hover{background:#fef2f2;}
+.btn-green{background:transparent;color:#166534;border:1px solid rgba(22,163,74,.3);}
+.btn-green:hover{background:#f0fdf4;}
+.btn-xs{padding:5px 10px;font-size:.7rem;}
+.filter-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:16px;}
+.filter-select{padding:7px 12px;border:1px solid var(--border);border-radius:var(--r);font-family:var(--font-b);font-size:.8rem;color:var(--text);background:var(--bg-card);outline:none;cursor:pointer;}
+.filter-input{padding:7px 12px;border:1px solid var(--border);border-radius:var(--r);font-family:var(--font-b);font-size:.8rem;color:var(--text);background:var(--bg-card);outline:none;min-width:200px;}
+.filter-input:focus,.filter-select:focus{border-color:var(--primary);}
+.pagination{display:flex;gap:6px;justify-content:center;margin-top:16px;flex-wrap:wrap;padding:12px;}
+.pag-btn{padding:6px 12px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg-card);color:var(--text-2);font-family:var(--font-b);font-size:.75rem;font-weight:600;cursor:pointer;transition:all .15s;}
+.pag-btn:hover{background:var(--bg-muted);}
+.pag-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+.pag-btn:disabled{opacity:.4;pointer-events:none;}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px;}
+.modal{background:var(--bg-card);border-radius:var(--r-xl);padding:28px;max-width:440px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.2);}
+.modal h3{font-family:var(--font-d);font-size:1.3rem;font-weight:600;margin-bottom:8px;}
+.modal p{font-size:.82rem;color:var(--text-2);margin-bottom:16px;}
+.form-group{margin-bottom:12px;}
+.form-label{display:block;font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-2);margin-bottom:5px;}
+.form-input,.form-select,.form-textarea{width:100%;background:var(--bg-muted);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:var(--font-b);font-size:.88rem;padding:10px 13px;outline:none;transition:border-color .2s;}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--primary);}
+.form-textarea{resize:vertical;min-height:80px;}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;}
+.empty-row td{text-align:center;padding:48px;color:var(--text-m);}
+.loading-row td{text-align:center;padding:32px;color:var(--text-m);}
+.spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto;}
+@keyframes spin{to{transform:rotate(360deg);}}
+@media(max-width:900px){.layout{grid-template-columns:1fr;}.sidebar{position:static;height:auto;display:flex;flex-wrap:nowrap;overflow-x:auto;padding:10px;gap:4px;border-right:none;border-bottom:1px solid var(--border);scrollbar-width:none;}.sidebar::-webkit-scrollbar{display:none;}.sidebar-title{display:none;}.nav-item{flex-direction:column;gap:3px;font-size:.65rem;padding:8px 10px;min-width:60px;align-items:center;}.content{padding:16px 14px 80px;}.stats-grid{grid-template-columns:repeat(2,1fr);}}
+</style>
+</head>
+<body>
+<script>document.addEventListener('DOMContentLoaded',()=>renderNavbar('admin',{showLogin:false}));</script>
+
+<!-- Auth wall -->
+<div id="authWall" style="display:none;padding:40px 20px;text-align:center">
+  <div style="max-width:380px;margin:0 auto;background:#fff;border:1px solid #e2e8f0;border-radius:18px;padding:40px;">
+    <div style="font-size:2.5rem;margin-bottom:14px">🔐</div>
+    <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;margin-bottom:8px">Admin Only</h2>
+    <p style="color:#555770;margin-bottom:20px;font-size:.9rem">This page requires admin privileges.</p>
+    <a href="browse.html" class="btn btn-primary">Go to Browse</a>
+  </div>
+</div>
+
+<div id="adminWrap" style="display:none">
+<div class="layout">
+  <nav class="sidebar">
+    <div class="sidebar-title">Overview</div>
+    <button class="nav-item active" onclick="showSection('overview',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </button>
+    <div class="sidebar-title">Manage</div>
+    <button class="nav-item" onclick="showSection('reports',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+      Reports
+      <span class="nav-badge" id="reportsBadge" style="display:none">0</span>
+    </button>
+    <button class="nav-item" onclick="showSection('users',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Users
+    </button>
+    <button class="nav-item" onclick="showSection('listings',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+      Listings
+    </button>
+    <button class="nav-item" onclick="showSection('transactions',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      Transactions
+    </button>
+  </nav>
+
+  <main class="content">
+    <!-- Overview -->
+    <section class="section active" id="s-overview">
+      <h1 class="page-title">Admin Dashboard</h1>
+      <p class="page-sub">UniTrade LUANAR · System Overview</p>
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-card blue"><div class="stat-label">Total Users</div><div class="stat-value blue" id="st-users">—</div><div class="stat-sub" id="st-banned-sub"></div></div>
+        <div class="stat-card green"><div class="stat-label">Active Listings</div><div class="stat-value green" id="st-listings">—</div><div class="stat-sub" id="st-total-listings-sub"></div></div>
+        <div class="stat-card amber"><div class="stat-label">Open Reports</div><div class="stat-value amber" id="st-reports">—</div><div class="stat-sub">Needs review</div></div>
+        <div class="stat-card red"><div class="stat-label">Transactions</div><div class="stat-value red" id="st-txns">—</div><div class="stat-sub" id="st-pending-txns-sub"></div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px">
+        <div class="table-card" style="padding:20px">
+          <h3 style="font-family:var(--font-d);font-size:1.1rem;margin-bottom:12px">Quick Actions</h3>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <button class="btn btn-outline" style="justify-content:flex-start" onclick="showSection('reports',document.querySelector('[onclick*=reports]'))">📋 Review Open Reports</button>
+            <button class="btn btn-outline" style="justify-content:flex-start" onclick="showSection('transactions',document.querySelector('[onclick*=transactions]'))">🧾 View Disputed Transactions</button>
+            <button class="btn btn-outline" style="justify-content:flex-start" onclick="showSection('users',document.querySelector('[onclick*=users]'))">👥 Manage Users</button>
+            <button class="btn btn-outline" style="justify-content:flex-start" onclick="showSection('listings',document.querySelector('[onclick*=listings]'))">📦 Manage Listings</button>
+          </div>
+        </div>
+        <div class="table-card" style="padding:20px">
+          <h3 style="font-family:var(--font-d);font-size:1.1rem;margin-bottom:12px">System Health</h3>
+          <div id="healthInfo" style="font-size:.82rem;color:var(--text-2);line-height:2">Loading…</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Reports -->
+    <section class="section" id="s-reports">
+      <div class="section-head"><div><h2>User Reports</h2><p style="font-size:.82rem;color:var(--text-2);margin-top:2px">Review and resolve reports from students</p></div></div>
+      <div class="filter-row">
+        <select class="filter-select" id="report-status-filter" onchange="loadReports(1)">
+          <option value="open">Open</option>
+          <option value="resolved">Resolved</option>
+          <option value="closed">Closed</option>
+        </select>
+      </div>
+      <div class="table-card">
+        <div class="table-wrap"><table><thead><tr><th>ID</th><th>Reporter</th><th>Type</th><th>Target</th><th>Reason</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+        <tbody id="reports-tbody"><tr class="loading-row"><td colspan="8"><div class="spinner"></div></td></tr></tbody></table></div>
+        <div class="pagination" id="reports-pag"></div>
+      </div>
+    </section>
+
+    <!-- Users -->
+    <section class="section" id="s-users">
+      <div class="section-head"><div><h2>Users</h2><p style="font-size:.82rem;color:var(--text-2);margin-top:2px">All registered students</p></div></div>
+      <div class="filter-row">
+        <input type="text" class="filter-input" id="user-search" placeholder="Search by name, email or student ID…" oninput="debounceSearch()">
+      </div>
+      <div class="table-card">
+        <div class="table-wrap"><table><thead><tr><th>ID</th><th>Name</th><th>Student ID</th><th>Email</th><th>Campus</th><th>Listings</th><th>Status</th><th>Joined</th><th>Actions</th></tr></thead>
+        <tbody id="users-tbody"><tr class="loading-row"><td colspan="9"><div class="spinner"></div></td></tr></tbody></table></div>
+        <div class="pagination" id="users-pag"></div>
+      </div>
+    </section>
+
+    <!-- Listings -->
+    <section class="section" id="s-listings">
+      <div class="section-head"><div><h2>Listings</h2><p style="font-size:.82rem;color:var(--text-2);margin-top:2px">All marketplace listings</p></div></div>
+      <div class="filter-row">
+        <select class="filter-select" id="listing-status-filter" onchange="loadListings(1)">
+          <option value="">All Statuses</option>
+          <option value="active">Active</option>
+          <option value="sold">Sold</option>
+          <option value="expired">Expired</option>
+          <option value="removed">Removed</option>
+        </select>
+      </div>
+      <div class="table-card">
+        <div class="table-wrap"><table><thead><tr><th>ID</th><th>Title</th><th>Seller</th><th>Price</th><th>Category</th><th>Tier</th><th>Status</th><th>Posted</th><th>Actions</th></tr></thead>
+        <tbody id="listings-tbody"><tr class="loading-row"><td colspan="9"><div class="spinner"></div></td></tr></tbody></table></div>
+        <div class="pagination" id="listings-pag"></div>
+      </div>
+    </section>
+
+    <!-- Transactions -->
+    <section class="section" id="s-transactions">
+      <div class="section-head"><div><h2>Transactions</h2><p style="font-size:.82rem;color:var(--text-2);margin-top:2px">All platform transactions</p></div></div>
+      <div class="filter-row">
+        <select class="filter-select" id="txn-status-filter" onchange="loadAdminTxns(1)">
+          <option value="">All</option>
+          <option value="pending">Pending</option>
+          <option value="confirmed">Confirmed</option>
+          <option value="completed">Completed</option>
+          <option value="disputed">Disputed</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
+      <div class="table-card">
+        <div class="table-wrap"><table><thead><tr><th>Ticket</th><th>Buyer</th><th>Seller</th><th>Item</th><th>Amount</th><th>Method</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+        <tbody id="txns-tbody"><tr class="loading-row"><td colspan="9"><div class="spinner"></div></td></tr></tbody></table></div>
+        <div class="pagination" id="txns-pag"></div>
+      </div>
+    </section>
+  </main>
+</div>
+</div>
+
+<!-- Resolve Report Modal -->
+<div class="modal-overlay" id="resolveModal" style="display:none" onclick="if(event.target===this)closeModal('resolveModal')">
+  <div class="modal">
+    <h3>Resolve Report</h3>
+    <p>Update the status of this report and add admin notes.</p>
+    <input type="hidden" id="resolve-id">
+    <div class="form-group">
+      <label class="form-label">Status</label>
+      <select class="form-select" id="resolve-status">
+        <option value="resolved">Resolved</option>
+        <option value="closed">Closed</option>
+        <option value="open">Re-open</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Admin Notes</label>
+      <textarea class="form-textarea" id="resolve-notes" placeholder="What action was taken?"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('resolveModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="submitResolve()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Override Transaction Modal -->
+<div class="modal-overlay" id="overrideTxnModal" style="display:none" onclick="if(event.target===this)closeModal('overrideTxnModal')">
+  <div class="modal">
+    <h3>Admin Override</h3>
+    <p>Override transaction status. Use with caution — both parties are notified.</p>
+    <input type="hidden" id="override-id">
+    <div class="form-group">
+      <label class="form-label">New Status</label>
+      <select class="form-select" id="override-status">
+        <option value="completed">Completed</option>
+        <option value="cancelled">Cancelled</option>
+        <option value="pending">Revert to Pending</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Admin Notes <span style="color:var(--danger)">*</span></label>
+      <textarea class="form-textarea" id="override-notes" placeholder="Reason for override…"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('overrideTxnModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="submitOverride()">Apply Override</button>
+    </div>
+  </div>
+</div>
+
+<div id="toastWrap"></div>
+
+<script>
+// ── NO re-declaration of API — use the global from config.js ──
+let _token = null;
+
+document.addEventListener('DOMContentLoaded', function () {
+  _token      = utUtils.getToken();
+  const me    = utUtils.getUser();
+
+  if (!_token || !me) {
+    document.getElementById('authWall').style.display = 'block';
+    return;
+  }
+
+  // Show wrap immediately, but verify admin on first API call
+  document.getElementById('adminWrap').style.display = 'block';
+  initAdmin();
+});
+
+async function initAdmin() {
+  const res = await fetch(API + '/admin/stats', { headers: authH() });
+  if (res.status === 403 || res.status === 401) {
+    document.getElementById('adminWrap').style.display = 'none';
+    document.getElementById('authWall').style.display  = 'block';
+    return;
+  }
+  const data = await res.json();
+  renderStats(data);
+  loadReports(1);
+}
+
+function renderStats(d) {
+  document.getElementById('st-users').textContent    = d.users;
+  document.getElementById('st-listings').textContent = d.activeListings;
+  document.getElementById('st-reports').textContent  = d.openReports;
+  document.getElementById('st-txns').textContent     = d.totalTransactions;
+  document.getElementById('st-banned-sub').textContent         = `${d.bannedUsers} banned`;
+  document.getElementById('st-total-listings-sub').textContent = `${d.totalListings} total`;
+  document.getElementById('st-pending-txns-sub').textContent   = `${d.pendingTransactions} pending`;
+  if (d.openReports > 0) {
+    const badge = document.getElementById('reportsBadge');
+    badge.style.display = 'inline';
+    badge.textContent   = d.openReports > 99 ? '99+' : d.openReports;
+  }
+  document.getElementById('healthInfo').innerHTML = `
+    <div>👥 Total users: <strong>${d.users}</strong></div>
+    <div>🚫 Banned users: <strong>${d.bannedUsers}</strong></div>
+    <div>📦 Active listings: <strong>${d.activeListings}</strong></div>
+    <div>💬 Conversations: <strong>${d.conversations}</strong></div>
+    <div>🧾 Total transactions: <strong>${d.totalTransactions}</strong></div>
+    <div>📋 Open reports: <strong>${d.openReports}</strong></div>
+  `;
+}
+
+const loaded = new Set();
+function showSection(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  document.getElementById('s-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+  if (!loaded.has(id)) {
+    loaded.add(id);
+    if (id === 'users')        loadUsers(1);
+    if (id === 'listings')     loadListings(1);
+    if (id === 'transactions') loadAdminTxns(1);
+  }
+}
+
+// ── Reports ───────────────────────────────────────────────────
+async function loadReports(page) {
+  const status = document.getElementById('report-status-filter').value;
+  const tbody  = document.getElementById('reports-tbody');
+  tbody.innerHTML = '<tr class="loading-row"><td colspan="8"><div class="spinner"></div></td></tr>';
+  const res = await fetch(API + `/admin/reports?status=${status}&page=${page}&limit=20`, { headers: authH() });
+  if (!res.ok) { tbody.innerHTML = '<tr class="empty-row"><td colspan="8">Failed to load reports</td></tr>'; return; }
+  const data = await res.json();
+  if (!data.data.length) { tbody.innerHTML = '<tr class="empty-row"><td colspan="8">No reports with this status</td></tr>'; document.getElementById('reports-pag').innerHTML=''; return; }
+  tbody.innerHTML = data.data.map(r => `
+    <tr>
+      <td class="td-mono">#${r.id}</td>
+      <td class="td-name">${esc(r.reporterName||'?')}<br><span class="td-muted">${esc(r.reporterStudentId||'')}</span></td>
+      <td><span class="pill pill-open">${esc(r.type)}</span></td>
+      <td class="td-mono">${esc(r.targetId||'—')}</td>
+      <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(r.reason)}</td>
+      <td><span class="pill pill-${r.status}">${r.status}</span></td>
+      <td class="td-muted">${fmtDate(r.createdAt)}</td>
+      <td><button class="btn btn-outline btn-xs" onclick="openResolve(${r.id})">Review</button></td>
+    </tr>`).join('');
+  renderPag('reports-pag', data.totalPages, page, loadReports);
+}
+
+// ── Users ─────────────────────────────────────────────────────
+let userSearchTimeout;
+function debounceSearch() { clearTimeout(userSearchTimeout); userSearchTimeout = setTimeout(()=>loadUsers(1), 400); }
+
+async function loadUsers(page) {
+  const tbody = document.getElementById('users-tbody');
+  tbody.innerHTML = '<tr class="loading-row"><td colspan="9"><div class="spinner"></div></td></tr>';
+  const res = await fetch(API + `/admin/users?page=${page}&limit=25`, { headers: authH() });
+  if (!res.ok) { tbody.innerHTML = '<tr class="empty-row"><td colspan="9">Failed to load users</td></tr>'; return; }
+  const data   = await res.json();
+  const search = document.getElementById('user-search').value.toLowerCase();
+  const users  = search ? data.data.filter(u =>
+    u.name?.toLowerCase().includes(search) ||
+    u.email?.toLowerCase().includes(search) ||
+    u.studentId?.toLowerCase().includes(search)
+  ) : data.data;
+  if (!users.length) { tbody.innerHTML = '<tr class="empty-row"><td colspan="9">No users found</td></tr>'; return; }
+  tbody.innerHTML = users.map(u => `
+    <tr>
+      <td class="td-mono">${u.id}</td>
+      <td class="td-name">${esc(u.name)} ${u.isAdmin ? '<span class="pill pill-confirmed" style="font-size:.6rem">Admin</span>':''}</td>
+      <td class="td-mono">${esc(u.studentId)}</td>
+      <td class="td-muted">${esc(u.email)}</td>
+      <td class="td-muted">${esc(u.campus||'—')}</td>
+      <td style="text-align:center">${u.listingCount||0}</td>
+      <td><span class="pill ${u.isBanned?'pill-banned':'pill-ok'}">${u.isBanned?'Banned':'Active'}</span></td>
+      <td class="td-muted">${fmtDate(u.joinedAt)}</td>
+      <td style="display:flex;gap:6px;flex-wrap:wrap">
+        <button class="btn ${u.isBanned?'btn-green':'btn-red'} btn-xs" onclick="toggleBan(${u.id},${u.isBanned?0:1},'${esc(u.name)}')">${u.isBanned?'Unban':'Ban'}</button>
+      </td>
+    </tr>`).join('');
+  renderPag('users-pag', data.totalPages, page, loadUsers);
+}
+
+async function toggleBan(id, ban, name) {
+  if (!confirm(`${ban ? 'Ban' : 'Unban'} user "${name}"?`)) return;
+  const res = await fetch(API + `/admin/users/${id}/ban`, { method:'PUT', headers: authH(), body: JSON.stringify({ banned: !!ban }) });
+  if (res.ok) { utUtils.showToast(`User ${ban?'banned':'unbanned'}.`, ban?'error':'success'); loadUsers(1); }
+  else utUtils.showToast('Action failed', 'error');
+}
+
+// ── Listings ──────────────────────────────────────────────────
+async function loadListings(page) {
+  const status = document.getElementById('listing-status-filter').value;
+  const tbody  = document.getElementById('listings-tbody');
+  tbody.innerHTML = '<tr class="loading-row"><td colspan="9"><div class="spinner"></div></td></tr>';
+  const res = await fetch(API + `/admin/listings?status=${status}&page=${page}&limit=25`, { headers: authH() });
+  if (!res.ok) { tbody.innerHTML = '<tr class="empty-row"><td colspan="9">Failed to load listings</td></tr>'; return; }
+  const data = await res.json();
+  if (!data.data.length) { tbody.innerHTML = '<tr class="empty-row"><td colspan="9">No listings</td></tr>'; return; }
+  tbody.innerHTML = data.data.map(l => `
+    <tr>
+      <td class="td-mono">${l.id}</td>
+      <td style="max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><a href="listing.html?id=${l.id}" target="_blank" style="color:var(--primary);font-weight:600">${esc(l.title)}</a></td>
+      <td>${esc(l.sellerName)}<br><span class="td-muted" style="font-size:.72rem">${esc(l.sellerEmail||'')}</span></td>
+      <td style="font-weight:600">MK ${Number(l.price).toLocaleString()}</td>
+      <td class="td-muted">${l.category}</td>
+      <td><span class="pill pill-ok">${l.tier||'standard'}</span></td>
+      <td><span class="pill pill-${l.status}">${l.status}</span></td>
+      <td class="td-muted">${fmtDate(l.createdAt)}</td>
+      <td><button class="btn btn-red btn-xs" onclick="deleteListing(${l.id})">Remove</button></td>
+    </tr>`).join('');
+  renderPag('listings-pag', data.totalPages, page, loadListings);
+}
+
+async function deleteListing(id) {
+  if (!confirm('Remove this listing? This cannot be undone.')) return;
+  const res = await fetch(API + `/admin/listings/${id}`, { method:'DELETE', headers: authH() });
+  if (res.ok) { utUtils.showToast('Listing removed.', 'success'); loadListings(1); }
+  else utUtils.showToast('Failed to remove', 'error');
+}
+
+// ── Admin Transactions ────────────────────────────────────────
+async function loadAdminTxns(page) {
+  const status = document.getElementById('txn-status-filter').value;
+  const tbody  = document.getElementById('txns-tbody');
+  tbody.innerHTML = '<tr class="loading-row"><td colspan="9"><div class="spinner"></div></td></tr>';
+  const res = await fetch(API + `/admin/transactions?status=${status}&page=${page}&limit=25`, { headers: authH() });
+  if (!res.ok) { tbody.innerHTML = '<tr class="empty-row"><td colspan="9">Failed to load</td></tr>'; return; }
+  const data = await res.json();
+  if (!data.data.length) { tbody.innerHTML = '<tr class="empty-row"><td colspan="9">No transactions</td></tr>'; return; }
+  tbody.innerHTML = data.data.map(t => `
+    <tr>
+      <td class="td-mono" style="font-weight:700;color:var(--primary)">${t.ticketNumber}</td>
+      <td>${esc(t.buyerName||'—')}</td>
+      <td>${esc(t.sellerName||'—')}</td>
+      <td style="max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(t.listingTitle||'—')}</td>
+      <td style="font-weight:600">MK ${Number(t.amount).toLocaleString()}</td>
+      <td class="td-muted">${(t.paymentMethod||'').toUpperCase()}</td>
+      <td><span class="pill pill-${t.status}">${t.status}</span></td>
+      <td class="td-muted">${fmtDate(t.createdAt)}</td>
+      <td style="display:flex;gap:6px">
+        <a href="${API}/transactions/${t.id}/receipt" target="_blank" class="btn btn-outline btn-xs">Receipt</a>
+        <button class="btn btn-red btn-xs" onclick="openOverride(${t.id})">Override</button>
+      </td>
+    </tr>`).join('');
+  renderPag('txns-pag', data.totalPages, page, loadAdminTxns);
+}
+
+// ── Modals ────────────────────────────────────────────────────
+function openResolve(id) {
+  document.getElementById('resolve-id').value = id;
+  document.getElementById('resolveModal').style.display = 'flex';
+}
+async function submitResolve() {
+  const id     = document.getElementById('resolve-id').value;
+  const status = document.getElementById('resolve-status').value;
+  const notes  = document.getElementById('resolve-notes').value.trim();
+  const res = await fetch(API + `/admin/reports/${id}`, { method:'PUT', headers: authH(), body: JSON.stringify({ status, adminNotes: notes }) });
+  if (res.ok) { utUtils.showToast('Report updated.', 'success'); closeModal('resolveModal'); loadReports(1); }
+  else utUtils.showToast('Failed to update', 'error');
+}
+
+function openOverride(id) {
+  document.getElementById('override-id').value = id;
+  document.getElementById('overrideTxnModal').style.display = 'flex';
+}
+async function submitOverride() {
+  const id     = document.getElementById('override-id').value;
+  const status = document.getElementById('override-status').value;
+  const notes  = document.getElementById('override-notes').value.trim();
+  if (!notes) return utUtils.showToast('Admin notes required for override', 'error');
+  const res = await fetch(API + `/admin/transactions/${id}`, { method:'PUT', headers: authH(), body: JSON.stringify({ status, adminNotes: notes }) });
+  if (res.ok) { utUtils.showToast('Transaction overridden.', 'success'); closeModal('overrideTxnModal'); loadAdminTxns(1); }
+  else utUtils.showToast('Failed', 'error');
+}
+
+function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+function authH()        { return { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + _token }; }
+function fmtDate(d)     { return new Date(d).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' }); }
+function esc(s)         { const d = document.createElement('div'); d.textContent = String(s||''); return d.innerHTML; }
+
+function renderPag(id, totalPages, page, fn) {
+  const el = document.getElementById(id);
+  if (!el || totalPages <= 1) { if (el) el.innerHTML = ''; return; }
+  let html = `<button class="pag-btn" onclick="${fn.name}(${page-1})" ${page===1?'disabled':''}>← Prev</button>`;
+  for (let i = 1; i <= totalPages; i++) {
+    if (i===1||i===totalPages||Math.abs(i-page)<=1)
+      html += `<button class="pag-btn ${i===page?'active':''}" onclick="${fn.name}(${i})">${i}</button>`;
+    else if (Math.abs(i-page)===2)
+      html += `<span style="padding:6px 4px;color:var(--text-m)">…</span>`;
+  }
+  html += `<button class="pag-btn" onclick="${fn.name}(${page+1})" ${page===totalPages?'disabled':''}>Next →</button>`;
+  el.innerHTML = html;
+}
+</script>
+</body>
+</html>

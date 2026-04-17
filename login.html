@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Sign In — UniTrade</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/ut.css">
+<script src="../js/config.js"></script>
+<script src="../js/utils.js"></script>
+<script src="../js/navbar.js"></script>
+<style>
+body{display:flex;flex-direction:column;background:var(--bg);}
+.auth-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 20px;}
+.auth-box{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-xl);padding:48px 40px;width:100%;max-width:420px;box-shadow:var(--shadow);}
+.auth-logo{text-align:center;margin-bottom:24px;}
+.auth-logo a{font-family:var(--font-d);font-size:2rem;font-weight:700;color:var(--primary);text-decoration:none;}
+.auth-logo a span{color:var(--text);}
+.auth-title{font-family:var(--font-d);font-size:1.75rem;font-weight:600;text-align:center;margin-bottom:4px;}
+.auth-sub{text-align:center;color:var(--text-2);font-size:.875rem;margin-bottom:28px;}
+.form-group{margin-bottom:18px;}
+.form-label{display:block;font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-2);margin-bottom:6px;}
+.form-input{width:100%;background:var(--bg-muted);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:var(--font-b);font-size:.9rem;padding:11px 14px;transition:border-color .2s,box-shadow .2s,background .2s;outline:none;}
+.form-input:focus{border-color:var(--primary);background:var(--bg-card);box-shadow:0 0 0 3px rgba(0,123,255,.1);}
+.form-input::placeholder{color:var(--text-m);}
+.row-inline{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-size:.82rem;}
+.row-inline label{display:flex;align-items:center;gap:6px;color:var(--text-2);cursor:pointer;}
+.row-inline a{color:var(--primary);text-decoration:none;}.row-inline a:hover{text-decoration:underline;}
+.form-error{background:#fef2f2;border:1px solid rgba(220,38,38,.25);color:var(--danger);border-radius:var(--r);padding:10px 14px;font-size:.82rem;font-weight:500;margin-bottom:14px;display:none;}
+.form-error.show{display:block;}
+.btn-submit{width:100%;padding:13px;background:var(--primary);color:#fff;border:none;border-radius:var(--r);font-family:var(--font-b);font-size:.85rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:background .2s,transform .15s,box-shadow .2s;box-shadow:0 2px 8px rgba(0,123,255,.25);display:flex;align-items:center;justify-content:center;gap:8px;}
+.btn-submit:hover:not(:disabled){background:var(--primary-dark);transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,123,255,.35);}
+.btn-submit:disabled{opacity:.65;pointer-events:none;}
+.spinner{width:15px;height:15px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.divider{text-align:center;margin:20px 0;position:relative;color:var(--text-m);font-size:.78rem;}
+.divider::before{content:'';position:absolute;top:50%;left:0;right:0;height:1px;background:var(--border);}
+.divider span{background:var(--bg-card);padding:0 12px;position:relative;}
+.auth-footer{text-align:center;margin-top:18px;font-size:.82rem;color:var(--text-2);}
+.auth-footer a{color:var(--primary);font-weight:600;text-decoration:none;}.auth-footer a:hover{text-decoration:underline;}
+@media(max-width:480px){.auth-box{padding:32px 20px;}}
+</style>
+</head>
+<body>
+<script>document.addEventListener('DOMContentLoaded', () => renderNavbar('login', { showLogin: true }));</script>
+
+<div class="auth-wrap">
+  <div class="auth-box">
+    <div class="auth-logo"><a href="index.html">Uni<span>Trade</span></a></div>
+    <h1 class="auth-title">Welcome back</h1>
+    <p class="auth-sub">Sign in to your UniTrade account</p>
+    <div class="form-error" id="loginError"></div>
+    <form id="loginForm" onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input type="email" class="form-input" id="email" required placeholder="you@luanar.ac.mw" autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" class="form-input" id="password" required placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <div class="row-inline">
+        <label><input type="checkbox" id="remember"> Remember me</label>
+        <a href="#">Forgot password?</a>
+      </div>
+      <button type="submit" class="btn-submit" id="loginBtn">Sign In</button>
+    </form>
+    <div class="divider"><span>or</span></div>
+    <div class="auth-footer">Don't have an account? <a href="register.html">Sign up free</a></div>
+  </div>
+</div>
+<div id="toastWrap"></div>
+
+<script>
+// Fix Bug #4: Verify stale token before redirecting
+(async function checkExistingSession() {
+  const token = utUtils.getToken();
+  if (!token) return; // No token, stay on login page
+  // Verify with server — if invalid, clear and stay
+  const user = await utUtils.verifyToken();
+  if (user) {
+    const p = new URLSearchParams(window.location.search).get('redirect');
+    window.location.replace(p || 'browse.html');
+  }
+  // If null, token was stale — already cleared by verifyToken, stay on login
+})();
+
+function showError(m) {
+  const el = document.getElementById('loginError');
+  el.textContent = m;
+  el.classList.add('show');
+}
+function clearError() { document.getElementById('loginError').classList.remove('show'); }
+
+async function handleLogin(e) {
+  e.preventDefault();
+  clearError();
+
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+
+  const btn = document.getElementById('loginBtn');
+  btn.disabled = true;
+  btn.innerHTML = 'Signing in…';
+
+  try {
+    // CORRECT - uses config.js
+      const res = await fetch(`${API}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
+    });
+
+    const data = await res.json(); // 👈 STOP using text unless debugging
+
+    console.log("STATUS:", res.status);
+    console.log("RESPONSE:", data);
+
+    if (!res.ok) {
+      throw new Error(data.message || "Login failed");
+    }
+
+    if (!data.token || !data.user) {
+      throw new Error("Server did not return login data properly");
+    }
+
+    utUtils.setToken(data.token);
+    utUtils.setUser(data.user);
+
+    window.location.href = "browse.html";
+
+  } catch (err) {
+    showError(err.message || "Login error");
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = "Sign In";
+  }
+}
+</script>
+</body>
+</html>

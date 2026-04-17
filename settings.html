@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Settings - UniTrade</title>
+<meta http-equiv="refresh" content="2;url=profile.html">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#f4f6f9;font-family:'Syne',system-ui,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;}
+.box{background:#fff;border:1px solid #e2e8f0;border-radius:18px;padding:48px 40px;text-align:center;max-width:380px;width:100%;box-shadow:0 4px 24px rgba(0,0,0,.07);}
+.logo{font-size:22px;font-weight:700;color:#007bff;text-decoration:none;display:block;margin-bottom:20px;}.logo span{color:#333;}
+h2{font-size:1.5rem;font-weight:600;margin-bottom:8px;color:#1a1a2e;}
+p{font-size:.85rem;color:#555770;margin-bottom:20px;line-height:1.5;}
+.bar{height:3px;background:#e2e8f0;border-radius:2px;overflow:hidden;}
+.bar-fill{height:100%;background:#007bff;animation:fill 2s linear forwards;}
+@keyframes fill{from{width:0}to{width:100%}}
+a{color:#007bff;font-weight:600;text-decoration:none;}
+</style>
+  <link rel="stylesheet" href="../css/ut.css">
+  <script src="../js/config.js"></script>
+  <script src="../js/utils.js"></script>
+<script src="../js/navbar.js"></script>
+</head>
+<body>
+  <script>document.addEventListener('DOMContentLoaded',()=>renderNavbar('settings',{showLogin:false}));</script>
+<div class="box">
+  <a href="profile.html" class="logo">Uni<span>Trade</span></a>
+  <h2>Settings moved</h2>
+  <p>All settings are now in your <strong>Profile</strong> page — Account, Notifications, Privacy, and Security tabs. Redirecting you there now…</p>
+  <div class="bar"><div class="bar-fill"></div></div>
+  <p style="margin-top:14px;margin-bottom:0;font-size:.78rem;">Not redirecting? <a href="profile.html">Click here</a></p>
+</div>
+</body>
+</html>

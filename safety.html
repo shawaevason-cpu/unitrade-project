@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Safety Tips - UniTrade</title>
+  <script src="../js/navbar.js"></script>
+  <style>
+    /* ── Page-specific styles only ─────────────────────────── */
+    .ut-toggle { display:flex !important; }
+    .hero-safety {
+      background: linear-gradient(135deg, #064e3b 0%, #065f46 50%, #047857 100%);
+      color: #fff;
+      padding: 48px clamp(14px,3vw,40px) 40px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-safety::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 60% 80% at 90% 50%, rgba(255,255,255,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-inner {
+      max-width: 1320px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+    .hero-text { flex: 1; min-width: 240px; }
+    .hero-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 20px; padding: 4px 14px;
+      font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      margin-bottom: 14px; color: #a7f3d0;
+    }
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 700; line-height: 1.1;
+      margin-bottom: 12px;
+    }
+    .hero-sub {
+      font-size: 0.95rem; color: rgba(255,255,255,0.8);
+      line-height: 1.6; max-width: 480px;
+    }
+    .hero-shield {
+      width: 120px; height: 120px; flex-shrink: 0;
+      background: rgba(255,255,255,0.1);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      border: 2px solid rgba(255,255,255,0.2);
+    }
+    .hero-shield svg { width: 60px; height: 60px; color: #a7f3d0; }
+
+    /* Breadcrumb */
+    .breadcrumb {
+      max-width: 1320px; margin: 0 auto;
+      padding: 14px clamp(14px,3vw,40px) 0;
+      display: flex; align-items: center; gap: 6px;
+      font-size: 0.78rem; color: var(--text-muted);
+    }
+    .breadcrumb a { color: var(--text-muted); text-decoration: none; transition: color .15s; }
+    .breadcrumb a:hover { color: var(--primary); }
+    .breadcrumb span { color: var(--text-muted); }
+
+    /* Main layout */
+    .page-wrap {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 24px clamp(14px,3vw,40px) 60px;
+    }
+
+    /* Alert banner */
+    .alert-banner {
+      background: linear-gradient(135deg, #fef3c7, #fde68a);
+      border: 1px solid #f59e0b;
+      border-left: 4px solid #d97706;
+      border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+      padding: 16px 20px;
+      display: flex; align-items: flex-start; gap: 14px;
+      margin-bottom: 32px;
+    }
+    .alert-banner svg { width: 22px; height: 22px; color: #d97706; flex-shrink: 0; margin-top: 1px; }
+    .alert-banner strong { color: #78350f; font-size: 0.88rem; display: block; margin-bottom: 3px; }
+    .alert-banner p { color: #92400e; font-size: 0.82rem; line-height: 1.5; margin: 0; }
+
+    /* Category grid */
+    .cat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(300px,100%), 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    /* Safety card */
+    .safety-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .safety-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-hover);
+    }
+    .card-top {
+      padding: 20px 20px 16px;
+      display: flex; align-items: flex-start; gap: 14px;
+    }
+    .card-icon {
+      width: 46px; height: 46px; border-radius: var(--radius-lg);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; font-size: 1.4rem;
+    }
+    .card-icon.green  { background: #d1fae5; }
+    .card-icon.blue   { background: #dbeafe; }
+    .card-icon.amber  { background: #fef3c7; }
+    .card-icon.red    { background: #fee2e2; }
+    .card-icon.purple { background: #ede9fe; }
+    .card-icon.teal   { background: #ccfbf1; }
+    .card-title { font-weight: 700; font-size: 0.95rem; color: var(--text-primary); margin-bottom: 3px; }
+    .card-desc  { font-size: 0.78rem; color: var(--text-muted); line-height: 1.4; }
+    .card-tips  { padding: 0 20px 20px; display: flex; flex-direction: column; gap: 0; }
+    .tip-item {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 10px 0;
+      border-top: 1px solid var(--border);
+      font-size: 0.84rem; color: var(--text-secondary); line-height: 1.5;
+    }
+    .tip-item:first-child { border-top: none; padding-top: 0; }
+    .tip-dot {
+      width: 20px; height: 20px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px; font-size: 0.72rem; font-weight: 800;
+    }
+    .tip-dot.green  { background: #d1fae5; color: #065f46; }
+    .tip-dot.blue   { background: #dbeafe; color: #1e40af; }
+    .tip-dot.amber  { background: #fef3c7; color: #92400e; }
+    .tip-dot.red    { background: #fee2e2; color: #991b1b; }
+    .tip-dot.purple { background: #ede9fe; color: #5b21b6; }
+    .tip-dot.teal   { background: #ccfbf1; color: #134e4a; }
+
+    /* Quick checklist */
+    .checklist-section {
+      background: linear-gradient(135deg, #065f46, #047857);
+      border-radius: var(--radius-xl);
+      padding: 32px;
+      color: #fff;
+      margin-bottom: 32px;
+      position: relative; overflow: hidden;
+    }
+    .checklist-section::before {
+      content: '';
+      position: absolute; top: -40px; right: -40px;
+      width: 200px; height: 200px; border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+    }
+    .checklist-title {
+      font-family: var(--font-display);
+      font-size: 1.5rem; font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .checklist-sub { font-size: 0.85rem; color: rgba(255,255,255,0.75); margin-bottom: 24px; }
+    .checklist-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(220px,100%), 1fr));
+      gap: 10px;
+    }
+    .checklist-item {
+      display: flex; align-items: center; gap: 10px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: var(--radius-lg);
+      padding: 10px 14px;
+      font-size: 0.82rem; font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+      user-select: none;
+    }
+    .checklist-item:hover { background: rgba(255,255,255,0.18); }
+    .checklist-item.checked { background: rgba(167,243,208,0.2); border-color: #a7f3d0; }
+    .chk-box {
+      width: 20px; height: 20px; border-radius: 6px;
+      border: 2px solid rgba(255,255,255,0.4);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: all 0.2s;
+      background: transparent;
+    }
+    .checklist-item.checked .chk-box {
+      background: #a7f3d0; border-color: #a7f3d0;
+    }
+    .chk-tick { display: none; font-size: 0.7rem; color: #065f46; font-weight: 900; }
+    .checklist-item.checked .chk-tick { display: block; }
+    .chk-progress {
+      margin-top: 20px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .chk-bar-wrap {
+      flex: 1; height: 6px; background: rgba(255,255,255,0.2);
+      border-radius: 3px; overflow: hidden;
+    }
+    .chk-bar { height: 100%; background: #a7f3d0; border-radius: 3px; transition: width 0.3s; width: 0%; }
+    .chk-label { font-size: 0.78rem; color: #a7f3d0; font-weight: 700; white-space: nowrap; }
+
+    /* Emergency contacts */
+    .contacts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(240px,100%), 1fr));
+      gap: 14px;
+      margin-bottom: 32px;
+    }
+    .contact-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-xl); padding: 18px 16px;
+      display: flex; align-items: center; gap: 14px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .contact-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+    .contact-icon {
+      width: 44px; height: 44px; border-radius: var(--radius-lg);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; font-size: 1.3rem;
+    }
+    .contact-name { font-weight: 700; font-size: 0.88rem; color: var(--text-primary); }
+    .contact-num  { font-size: 0.82rem; color: var(--primary); font-weight: 700; margin-top: 1px; font-family: monospace; }
+    .contact-note { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
+
+    /* Report section */
+    .report-cta {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-xl); padding: 28px 32px;
+      display: flex; align-items: center; gap: 24px;
+      flex-wrap: wrap;
+    }
+    .report-icon-wrap {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: #fef2f2; display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .report-icon-wrap svg { width: 28px; height: 28px; color: var(--danger); }
+    .report-text { flex: 1; min-width: 200px; }
+    .report-text h3 { font-family: var(--font-display); font-size: 1.25rem; font-weight: 600; margin-bottom: 4px; }
+    .report-text p  { font-size: 0.84rem; color: var(--text-secondary); line-height: 1.5; }
+    .report-actions { display: flex; gap: 10px; flex-wrap: wrap; flex-shrink: 0; }
+
+    /* Section divider */
+    .section-label {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 20px;
+    }
+    .section-label h2 { font-family: var(--font-display); font-size: 1.5rem; font-weight: 600; }
+    .section-label-line { flex: 1; height: 1px; background: var(--border); }
+
+    @media (max-width: 640px) {
+      .hero-safety  { padding: 32px 14px 28px; }
+      .hero-shield  { display: none; }
+      .checklist-section { padding: 22px 16px; }
+      .report-cta   { padding: 20px 16px; flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+  <link rel="stylesheet" href="../css/ut.css">
+</head>
+<body>
+
+  <!-- Navbar injected by navbar.js -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      renderNavbar('safety', { showLogin: false });
+    });
+  </script>
+
+  <!-- Hero -->
+  <section class="hero-safety">
+    <div class="hero-inner">
+      <div class="hero-text">
+        <div class="hero-pill">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+          Student Safety
+        </div>
+        <h1 class="hero-title">Stay Safe on UniTrade</h1>
+        <p class="hero-sub">UniTrade connects LUANAR students — but your safety always comes first. Read these guidelines before buying or selling anything on campus.</p>
+      </div>
+      <div class="hero-shield" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          <polyline points="9 12 11 14 15 10" stroke-width="2"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="index.html">Home</a>
+    <span>›</span>
+    <span style="color:var(--text-primary);font-weight:600;">Safety Tips</span>
+  </nav>
+
+  <main class="page-wrap">
+
+    <!-- Alert banner -->
+    <div class="alert-banner" role="alert">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+        <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+      </svg>
+      <div>
+        <strong>Your safety is your responsibility — UniTrade cannot guarantee in-person meetings.</strong>
+        <p>UniTrade is a peer-to-peer marketplace. We provide guidelines, but all transactions happen between individual students. Always use common sense and trust your instincts.</p>
+      </div>
+    </div>
+
+    <!-- Pre-meeting checklist -->
+    <div class="checklist-section">
+      <h2 class="checklist-title">✓ Before You Meet — Quick Checklist</h2>
+      <p class="checklist-sub">Tick each step before agreeing to any in-person exchange.</p>
+      <div class="checklist-grid" id="checklist">
+        <div class="checklist-item" onclick="toggleCheck(this)">
+          <div class="chk-box"><span class="chk-tick">✓</span></div>
+          <span>Verified the seller's LUANAR profile</span>
+        </div>
+        <div class="checklist-item" onclick="toggleCheck(this)">
+          <div class="chk-box"><span class="chk-tick">✓</span></div>
+          <span>Agreed to meet in a public campus location</span>
+        </div>
+        <div class="checklist-item" onclick="toggleCheck(this)">
+          <div class="chk-box"><span class="chk-tick">✓</span></div>
+          <span>Told a friend or roommate where you're going</span>
+        </div>
+        <div class="checklist-item" onclick="toggleCheck(this)">
+          <div class="chk-box"><span class="chk-tick">✓</span></div>
+          <span>Planned to inspect the item before paying</span>
+        </div>
+        <div class="checklist-item" onclick="toggleCheck(this)">
+          <div class="chk-box"><span class="chk-tick">✓</span></div>
+          <span>Have the seller's phone number saved</span>
+        </div>
+        <div class="checklist-item" onclick="toggleCheck(this)">
+          <div class="chk-box"><span class="chk-tick">✓</span></div>
+          <span>Ready to pay exact cash — not sent in advance</span>
+        </div>
+        <div class="checklist-item" onclick="toggleCheck(this)">
+          <div class="chk-box"><span class="chk-tick">✓</span></div>
+          <span>Meeting during daylight / busy hours</span>
+        </div>
+        <div class="checklist-item" onclick="toggleCheck(this)">
+          <div class="chk-box"><span class="chk-tick">✓</span></div>
+          <span>Bringing a friend along if possible</span>
+        </div>
+      </div>
+      <div class="chk-progress">
+        <div class="chk-bar-wrap"><div class="chk-bar" id="chkBar"></div></div>
+        <span class="chk-label" id="chkLabel">0 / 8 checked</span>
+      </div>
+    </div>
+
+    <!-- Safety categories -->
+    <div class="section-label">
+      <h2>Safety Guidelines</h2>
+      <div class="section-label-line"></div>
+    </div>
+
+    <div class="cat-grid">
+
+      <!-- Meeting Safety -->
+      <div class="safety-card">
+        <div class="card-top">
+          <div class="card-icon green">🤝</div>
+          <div>
+            <div class="card-title">Meeting in Person</div>
+            <div class="card-desc">Rules for safe face-to-face exchanges on campus</div>
+          </div>
+        </div>
+        <div class="card-tips">
+          <div class="tip-item">
+            <div class="tip-dot green">1</div>
+            <span><strong>Always meet on campus</strong> in a well-populated public area — Library entrance, Student Centre, Cafeteria, or Administration Block.</span>
+          </div>
+          <div class="tip-item">
+            <div class="tip-dot green">2</div>
+            <span><strong>Bring a friend.</strong> Having someone with you significantly reduces risk and gives you a witness.</span>
+          </div>
+          <div class="tip-item">
+            <div class="tip-dot green">3</div>
+            <span><strong>Meet during busy hours</strong> — daytime, not late evening. Avoid isolated spots, residences, or off-campus locations.</span>
+          </div>
+          <div class="tip-item">
+            <div class="tip-dot green">4</div>
+            <span><strong>Tell someone where you're going.</strong> Share the seller's name, listing link, and expected meeting time with a trusted person.</span>
+          </div>
+          <div class="tip-item">
+            <div class="tip-dot green">5</div>
+            <span><strong>Trust your instincts.</strong> If anything feels wrong — cancel and leave. No item is worth your safety.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment Safety -->
+      <div class="safety-card">
+        <div class="card-top">
+          <div class="card-icon blue">💳</div>
+          <div>
+            <div class="card-title">Payment & Money</div>
+            <div class="card-desc">How to pay safely and avoid scams</div>
+          </div>
+        </div>
+        <div class="card-tips">
+          <div class="tip-item">
+            <div class="tip-dot blue">1</div>
+            <span><strong>Never pay in advance.</strong> Always pay only after you have physically received and inspected the item.</span>
+          </div>
+          <div class="tip-item">
+            <div class="tip-dot blue">2</div>
+            <span><strong>Avoid mobile money transfers</strong> until you're holding the item. Transfers are hard to reverse if the seller disappears.</span>
+          </div>
+          <div class="tip-item">
+            <div class="tip-dot blue">3</div>
+            <span><strong>Do not share your banking PIN,</strong> Mpamba PIN, Airtel Money PIN, or any OTP codes with anyone — ever.</span>
+          </div>
+          <div class="tip-item">
+            <div class="tip-dot blue">4</div>
+            <span><strong>Beware of "send a deposit" requests.</strong> Legitimate sellers don't ask for partial payment to hold an item for strangers.</span>
+          </div>
+          <div class="tip-item">
+            <div class="tip-dot blue">5</div>
+            <span><strong>Use exact cash where possible.</strong> Avoid creating change disputes. Count money in the open before exchanging.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Item Verification -->
+      <div class="safety-card">
+        <div class="card-top">
+          <div class="card-icon amber">🔍</div>
+          <div>
+            <div class="card-title">Verifying Items</div>
+            <div class="card-desc">Inspect before you commit to buying</div>
+          </div>
+        </div>
+        <div class="card-tips">
+          <div class="tip-item">
+            <div class="tip-dot amber">1</div>
+            <span><strong>Inspect thoroughly before paying.</strong> Test electronics, check textbook editions, try on clothing, verify serial numbers.</span>
+          </div>
+          <div class="tip-item">
+            <div class="tip-dot amber">2</div>
+            <span><strong>Compare with the listing photos.</strong> If the item looks different from what was advertised, walk away.</span>
+          </div>
+          <div class="tip-item">
+            <div class="tip-dot amber">3</div>
+            <span><strong>Ask for proof of purchase</strong> for high-value electronics — a receipt or original box confirms legitimacy.</span>
+          </div>
+          <div class="tip-item">
+            <div class="tip-dot amber">4</div>
+            <span><strong>Don't be pressured.</strong> Sellers who rush you or won't let you inspect properly are a red flag.</span>
+          </div>
+          <div class="tip-item">
+            <div class="tip-dot amber">5</div>
+            <span><strong>Textbooks:</strong> Verify the edition, ISBN, and that all pages are present before agreeing on price.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Online Communication -->
+      <div class="safety-card">
+        <div class="card-top">
+          <div class="card-icon teal">💬</div>
+          <div>
+            <div class="card-title">Online Communication</div>
+            <div class="card-desc">Staying safe before you meet</div>
+          </div>
+        </div>
+        <div class="card-tips">
+          <div class="tip-item">
+            <div class="tip-dot teal">1</div>
+            <span><strong>Keep negotiations on UniTrade</strong> (comments) or WhatsApp — never move to unknown platforms or third-party apps.</span>
+          </div>
+          <div class="tip-item">
+            <div class="tip-dot teal">2</div>
+            <span><strong>Verify identity via WhatsApp call</strong> before meeting. A voice call is harder to fake than text messages.</span>
+          </div>
+          <div class="tip-item">
+            <div class="tip-dot teal">3</div>
+            <span><strong>Check their profile.</strong> A verified LUANAR Student ID, profile photo, and listing history all increase credibility.</span>
+          </div>
+          <div class="tip-item">
+            <div class="tip-dot teal">4</div>
+            <span><strong>Screenshot all conversations</strong> before meeting. If anything goes wrong, you'll have a record.</span>
+          </div>
+          <div class="tip-item">
+            <div class="tip-dot teal">5</div>
+            <span><strong>Be wary of new accounts</strong> with no history posting suspiciously cheap high-value items.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recognising Scams -->
+      <div class="safety-card">
+        <div class="card-top">
+          <div class="card-icon red">⚠️</div>
+          <div>
+            <div class="card-title">Recognising Scams</div>
+            <div class="card-desc">Common tricks and how to avoid them</div>
+          </div>
+        </div>
+        <div class="card-tips">
+          <div class="tip-item">
+            <div class="tip-dot red">1</div>
+            <span><strong>Price too good to be true?</strong> A MK 200,000 laptop listed for MK 30,000 is almost certainly a scam or stolen goods.</span>
+          </div>
+          <div class="tip-item">
+            <div class="tip-dot red">2</div>
+            <span><strong>"I'm not on campus right now"</strong> — sellers who can't meet in person and ask you to pay first are almost always scammers.</span>
+          </div>
+          <div class="tip-item">
+            <div class="tip-dot red">3</div>
+            <span><strong>Fake screenshots of payment</strong> can be easily created. Always confirm a transfer on your own device or check your balance.</span>
+          </div>
+          <div class="tip-item">
+            <div class="tip-dot red">4</div>
+            <span><strong>Urgency pressure</strong> — "I'm leaving campus tomorrow, buy today" is a classic pressure tactic. Legitimate sellers are patient.</span>
+          </div>
+          <div class="tip-item">
+            <div class="tip-dot red">5</div>
+            <span><strong>Stolen goods</strong> — if a seller can't explain where an item came from, or the price is unrealistically low, do not buy.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Selling Safely -->
+      <div class="safety-card">
+        <div class="card-top">
+          <div class="card-icon purple">🏷️</div>
+          <div>
+            <div class="card-title">Selling Safely</div>
+            <div class="card-desc">Protect yourself as a seller</div>
+          </div>
+        </div>
+        <div class="card-tips">
+          <div class="tip-item">
+            <div class="tip-dot purple">1</div>
+            <span><strong>Only accept verified payment.</strong> Wait until the transfer reflects in your own account before handing over the item.</span>
+          </div>
+          <div class="tip-item">
+            <div class="tip-dot purple">2</div>
+            <span><strong>Don't give your home address.</strong> Arrange all hand-overs in public campus locations, not your room or residence.</span>
+          </div>
+          <div class="tip-item">
+            <div class="tip-dot purple">3</div>
+            <span><strong>Photograph the item before the exchange</strong> to document its condition in case of any dispute.</span>
+          </div>
+          <div class="tip-item">
+            <div class="tip-dot purple">4</div>
+            <span><strong>Be honest about condition.</strong> Clearly state defects in your listing. Misleading buyers violates UniTrade's Terms.</span>
+          </div>
+          <div class="tip-item">
+            <div class="tip-dot purple">5</div>
+            <span><strong>Block and report</strong> buyers who are aggressive, threatening, or make unreasonable demands after a fair listing.</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Emergency contacts -->
+    <div class="section-label">
+      <h2>Emergency Contacts</h2>
+      <div class="section-label-line"></div>
+    </div>
+
+    <div class="contacts-grid" style="margin-bottom:32px;">
+      <div class="contact-card">
+        <div class="contact-icon" style="background:#fee2e2;">🚨</div>
+        <div>
+          <div class="contact-name">LUANAR Security</div>
+          <div class="contact-num">+265 888 000 111</div>
+          <div class="contact-note">On-campus security — 24/7</div>
+        </div>
+      </div>
+      <div class="contact-card">
+        <div class="contact-icon" style="background:#dbeafe;">👮</div>
+        <div>
+          <div class="contact-name">Lilongwe Police</div>
+          <div class="contact-num">265 or +265 888 888 000</div>
+          <div class="contact-note">National emergency hotline</div>
+        </div>
+      </div>
+      <div class="contact-card">
+        <div class="contact-icon" style="background:#d1fae5;">🏥</div>
+        <div>
+          <div class="contact-name">Student Affairs</div>
+          <div class="contact-num">+265 999 000 222</div>
+          <div class="contact-note">LUANAR student support office</div>
+        </div>
+      </div>
+      <div class="contact-card">
+        <div class="contact-icon" style="background:#fef3c7;">📧</div>
+        <div>
+          <div class="contact-name">UniTrade Support</div>
+          <div class="contact-num">support@unitrade.luanar.ac.mw</div>
+          <div class="contact-note">Report scams & suspicious users</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Report CTA -->
+    <div class="report-cta">
+      <div class="report-icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
+          <line x1="4" y1="22" x2="4" y2="15"/>
+        </svg>
+      </div>
+      <div class="report-text">
+        <h3>Spotted something suspicious?</h3>
+        <p>If you see a fake listing, suspected stolen goods, harassment, or any unsafe behaviour — report it immediately. Your reports protect the whole LUANAR community.</p>
+      </div>
+      <div class="report-actions">
+        <a href="report.html" class="btn btn-danger" style="display:inline-flex;align-items:center;gap:7px;padding:11px 22px;border-radius:10px;font-family:inherit;font-size:.82rem;font-weight:700;background:#dc2626;color:#fff;text-decoration:none;border:none;cursor:pointer;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+          Report an Issue
+        </a>
+        <a href="browse.html" class="btn btn-ghost" style="display:inline-flex;align-items:center;gap:7px;padding:11px 22px;border-radius:10px;font-family:inherit;font-size:.82rem;font-weight:600;background:transparent;color:var(--text-secondary);text-decoration:none;border:1px solid var(--border);cursor:pointer;">
+          Back to Browse
+        </a>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+    <footer class="ut-footer">
+    <div class="ut-footer-inner">
+      <div class="ut-footer-brand">
+        <a href="index.html" class="ft-logo">
+          <div class="ft-logo-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+          <span class="ft-logo-name">Uni<span>Trade</span></span>
+        </a>
+        <p>The campus marketplace for LUANAR students. Buy, sell and connect safely on campus.</p>
+        <div class="ft-social">
+          <a href="#" title="Facebook"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+          <a href="#" title="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg></a>
+          <a href="#" title="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+          <a href="mailto:sammymisanjo@gmail.com" title="Email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></a>
+        </div>
+      </div>
+      <div class="ut-footer-col">
+        <h5>Help</h5>
+        <a href="about.html">About Us</a>
+        <a href="feedback.html">Feedback</a>
+      </div>
+      <div class="ut-footer-col">
+        <h5>Account</h5>
+        <a href="login.html">Sign In</a>
+        <a href="register.html">Create Account</a>
+      </div>
+    </div>
+    <div class="ut-footer-bottom">
+      <span>&copy; 2026 UniTrade &mdash; Built for students, by student.</span>
+      <span><a href="terms.html">Terms</a> &nbsp;&middot;&nbsp; <a href="privacy.html">Privacy</a> &nbsp;&middot;&nbsp; <a href="safety.html">Safety</a></span>
+    </div>
+  </footer>
+<div id="toastWrap"></div>
+
+  <script>
+    /* ── Interactive checklist ──────────────────────────────── */
+    const TOTAL = 8;
+
+    function toggleCheck(item) {
+      item.classList.toggle('checked');
+      updateProgress();
+    }
+
+    function updateProgress() {
+      const checked = document.querySelectorAll('.checklist-item.checked').length;
+      const pct     = Math.round((checked / TOTAL) * 100);
+      document.getElementById('chkBar').style.width   = pct + '%';
+      document.getElementById('chkLabel').textContent = checked + ' / ' + TOTAL + ' checked';
+      if (checked === TOTAL) {
+        document.getElementById('chkLabel').textContent = '✓ All done — you\'re ready!';
+        document.getElementById('chkLabel').style.color = '#a7f3d0';
+      } else {
+        document.getElementById('chkLabel').style.color = '#a7f3d0';
+      }
+    }
+
+    /* ── "Print / Save" tip ─────────────────────────────────── */
+    // Allow Ctrl+P for printing the safety guide
+    document.addEventListener('keydown', function(e) {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+        // Let default print happen — page is print-friendly
+      }
+    });
+  </script>
+
+</body>
+</html>

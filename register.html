@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Create Account — UniTrade</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/ut.css">
+<script src="../js/utils.js"></script>
+<script src="../js/navbar.js"></script>
+<style>
+body{display:flex;flex-direction:column;background:var(--bg);}
+.auth-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 20px;}
+.auth-box{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-xl);padding:48px 40px;width:100%;max-width:480px;box-shadow:var(--shadow);}
+.auth-logo{text-align:center;margin-bottom:24px;}
+.auth-logo a{font-family:var(--font-d);font-size:2rem;font-weight:700;color:var(--primary);text-decoration:none;}
+.auth-logo a span{color:var(--text);}
+.auth-title{font-family:var(--font-d);font-size:1.75rem;font-weight:600;text-align:center;margin-bottom:4px;}
+.auth-sub{text-align:center;color:var(--text-2);font-size:.875rem;margin-bottom:28px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.form-group{margin-bottom:16px;}
+.form-label{display:block;font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-2);margin-bottom:6px;}
+.form-input{width:100%;background:var(--bg-muted);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:var(--font-b);font-size:.9rem;padding:11px 14px;transition:border-color .2s,box-shadow .2s,background .2s;outline:none;}
+.form-input:focus{border-color:var(--primary);background:var(--bg-card);box-shadow:0 0 0 3px rgba(0,123,255,.1);}
+.form-input::placeholder{color:var(--text-m);}
+.form-error{background:#fef2f2;border:1px solid rgba(220,38,38,.25);color:var(--danger);border-radius:var(--r);padding:10px 14px;font-size:.82rem;font-weight:500;margin-bottom:14px;display:none;}
+.form-error.show{display:block;}
+.pw-hint{font-size:.7rem;color:var(--text-m);margin-top:4px;}
+.btn-submit{width:100%;padding:13px;background:var(--primary);color:#fff;border:none;border-radius:var(--r);font-family:var(--font-b);font-size:.85rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:background .2s,transform .15s,box-shadow .2s;box-shadow:0 2px 8px rgba(0,123,255,.25);display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px;}
+.btn-submit:hover:not(:disabled){background:var(--primary-dark);transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,123,255,.35);}
+.btn-submit:disabled{opacity:.65;pointer-events:none;}
+.spinner{width:15px;height:15px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.terms-note{font-size:.75rem;color:var(--text-m);text-align:center;margin-top:12px;line-height:1.6;}
+.terms-note a{color:var(--primary);text-decoration:none;}.terms-note a:hover{text-decoration:underline;}
+.divider{text-align:center;margin:20px 0;position:relative;color:var(--text-m);font-size:.78rem;}
+.divider::before{content:'';position:absolute;top:50%;left:0;right:0;height:1px;background:var(--border);}
+.divider span{background:var(--bg-card);padding:0 12px;position:relative;}
+.auth-footer{text-align:center;margin-top:14px;font-size:.82rem;color:var(--text-2);}
+.auth-footer a{color:var(--primary);font-weight:600;text-decoration:none;}.auth-footer a:hover{text-decoration:underline;}
+@media(max-width:520px){.auth-box{padding:28px 18px;}.form-row{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<script>document.addEventListener('DOMContentLoaded', () => renderNavbar('register', { showLogin: true }));</script>
+
+<div class="auth-wrap">
+  <div class="auth-box">
+    <div class="auth-logo"><a href="index.html">Uni<span>Trade</span></a></div>
+    <h1 class="auth-title">Create Account</h1>
+    <p class="auth-sub">Join UniTrade — buy &amp; sell with fellow LUANAR students</p>
+    <div class="form-error" id="regError"></div>
+    <form id="regForm" onsubmit="handleRegister(event)">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" class="form-input" id="name" required placeholder="Your full name" autocomplete="name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Student ID</label>
+          <input type="text" class="form-input" id="studentId" required placeholder="e.g. LUA/2022/0001">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input type="email" class="form-input" id="email" required placeholder="you@luanar.ac.mw" autocomplete="email">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Phone (optional)</label>
+          <input type="tel" class="form-input" id="phone" placeholder="+265 999 000 000">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Campus</label>
+          <select class="form-input" id="campus">
+            <option value="">Select campus…</option>
+            <option value="Bunda">Bunda Campus</option>
+            <option value="Lilongwe">Lilongwe Campus</option>
+            <option value="Blantyre">Blantyre Campus</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" class="form-input" id="password" required placeholder="At least 6 characters" autocomplete="new-password">
+        <div class="pw-hint">Must be at least 6 characters</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Confirm Password</label>
+        <input type="password" class="form-input" id="confirmPassword" required placeholder="Repeat your password" autocomplete="new-password">
+      </div>
+      <button type="submit" class="btn-submit" id="regBtn">Create Account</button>
+      <p class="terms-note">By signing up you agree to our <a href="terms.html">Terms</a> and <a href="privacy.html">Privacy Policy</a>.</p>
+    </form>
+    <div class="divider"><span>or</span></div>
+    <div class="auth-footer">Already have an account? <a href="login.html">Sign in</a></div>
+  </div>
+</div>
+<div id="toastWrap"></div>
+
+<script>
+// Redirect if already logged in
+if (utUtils.getToken() && utUtils.getUser()) {
+  window.location.replace('browse.html');
+}
+
+function showError(m) { const el = document.getElementById('regError'); el.textContent = m; el.classList.add('show'); }
+function clearError()  { document.getElementById('regError').classList.remove('show'); }
+
+async function handleRegister(e) {
+  e.preventDefault();
+  clearError();
+  const name            = document.getElementById('name').value.trim();
+  const studentId       = document.getElementById('studentId').value.trim();
+  const email           = document.getElementById('email').value.trim();
+  const phone           = document.getElementById('phone').value.trim();
+  const campus          = document.getElementById('campus').value;
+  const password        = document.getElementById('password').value;
+  const confirmPassword = document.getElementById('confirmPassword').value;
+  const btn             = document.getElementById('regBtn');
+
+  if (password.length < 6) return showError('Password must be at least 6 characters.');
+  if (password !== confirmPassword) return showError('Passwords do not match.');
+
+  btn.disabled  = true;
+  btn.innerHTML = '<span class="spinner"></span> Creating account…';
+
+  try {
+    const res  = await fetch(utUtils.apiUrl('auth/register'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, phone, password, studentId, campus, university: 'LUANAR' })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Registration failed');
+
+    utUtils.setToken(data.token);
+    utUtils.setUser(data.user);
+    utUtils.showToast('Account created! Welcome to UniTrade 🎉', 'success');
+    setTimeout(() => window.location.href = 'browse.html', 800);
+  } catch (err) {
+    showError(err.message || 'Could not create account. Please try again.');
+    btn.disabled  = false;
+    btn.innerHTML = 'Create Account';
+  }
+}
+</script>
+</body>
+</html>

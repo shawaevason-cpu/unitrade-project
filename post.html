@@ -1,0 +1,468 @@
+html_content = '''<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Post an Item - UniTrade</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--primary:#007bff;--primary-hover:#0056b3;--primary-dim:rgba(0,123,255,.08);--secondary:#28a745;--danger:#dc2626;--warning:#f59e0b;--bg-page:#f4f6f9;--bg-card:#fff;--bg-tertiary:#f8f9fa;--border:#e2e8f0;--text-primary:#1a1a2e;--text-secondary:#555770;--text-muted:#9ca3af;--radius:8px;--radius-lg:12px;--radius-xl:18px;--font-display:'Cormorant Garamond',Georgia,serif;--font-body:'Syne',system-ui,sans-serif;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg-page);color:var(--text-primary);font-family:var(--font-body);font-size:15px;line-height:1.6;min-height:100vh;}
+/* NAVBAR */
+.navbar{display:flex;justify-content:space-between;align-items:center;padding:10px 20px;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.1);top:0;z-index:1000;gap:16px;}
+.logo{font-size:22px;font-weight:700;color:#007bff;text-decoration:none;flex-shrink:0;}.logo span{color:#333;}
+.nav-links{display:flex;gap:4px;align-items:center;}
+.nav-link{padding:7px 10px;border-radius:var(--radius);text-decoration:none;color:#555;font-size:.8rem;font-weight:500;transition:background .2s,color .2s;display:flex;align-items:center;gap:4px;}
+.nav-link:hover{background:#f0f0f0;color:#007bff;}
+.nav-notif{position:relative;}
+.nav-badge{position:absolute;top:-5px;right:-5px;background:var(--danger);color:#fff;border-radius:50%;min-width:16px;height:16px;font-size:.6rem;font-weight:800;display:none;align-items:center;justify-content:center;border:2px solid #fff;padding:0 2px;}
+.nav-av{width:34px;height:34px;border-radius:50%;background:var(--primary-dim);color:var(--primary);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;text-decoration:none;transition:box-shadow .2s,transform .15s;border:2px solid transparent;overflow:hidden;flex-shrink:0;}
+.nav-av:hover{transform:scale(1.08);box-shadow:0 0 0 3px rgba(0,123,255,.2);}
+.nav-av.nav-av-on{border-color:var(--primary);}
+.nav-av img{width:100%;height:100%;object-fit:cover;}
+/* MAIN */
+.main{max-width:900px;margin:0 auto;padding:32px 20px 60px;}
+.page-header{margin-bottom:28px;}
+.page-title{font-family:var(--font-display);font-size:2rem;font-weight:600;}
+.page-sub{font-size:.85rem;color:var(--text-secondary);margin-top:4px;}
+/* AUTH WALL */
+.auth-wall{max-width:400px;margin:60px auto;text-align:center;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-xl);padding:40px;}
+.auth-wall h2{font-family:var(--font-display);font-size:1.8rem;margin-bottom:8px;}
+.auth-wall p{color:var(--text-secondary);margin-bottom:20px;font-size:.9rem;}
+/* GRID */
+.form-grid{display:grid;grid-template-columns:1fr 340px;gap:24px;align-items:start;}
+/* CARD */
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-xl);overflow:hidden;margin-bottom:16px;}
+.card-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;background:var(--bg-tertiary);}
+.card-hicon{width:32px;height:32px;border-radius:var(--radius);background:var(--primary-dim);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.card-header h3{font-family:var(--font-display);font-size:1rem;font-weight:600;}
+.card-body{padding:20px;}
+/* FORM */
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.form-group{margin-bottom:16px;}.form-group:last-child{margin-bottom:0;}
+.form-label{display:block;font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-secondary);margin-bottom:6px;}
+.form-label .req{color:var(--danger);}
+.form-input,.form-textarea,.form-select{width:100%;background:var(--bg-tertiary);border:1px solid var(--border);border-radius:var(--radius);color:var(--text-primary);font-family:var(--font-body);font-size:.9rem;padding:11px 14px;transition:border-color .2s,box-shadow .2s,background .2s;outline:none;appearance:none;}
+.form-input:focus,.form-textarea:focus,.form-select:focus{border-color:var(--primary);background:#fff;box-shadow:0 0 0 3px rgba(0,123,255,.1);}
+.form-input.error,.form-select.error,.form-textarea.error{border-color:var(--danger);background:#fef2f2;}
+.form-textarea{resize:vertical;min-height:100px;line-height:1.6;}
+.form-select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23007bff' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-size:14px;padding-right:36px;cursor:pointer;}
+.form-hint{font-size:.72rem;color:var(--text-muted);margin-top:4px;display:block;}
+.field-error{font-size:.72rem;color:var(--danger);margin-top:4px;display:none;}
+/* PRICE + FEE */
+.price-wrap{position:relative;}
+.price-prefix{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-weight:700;color:var(--text-secondary);font-size:.88rem;pointer-events:none;}
+.price-wrap .form-input{padding-left:46px;}
+/* PAYMENT SUMMARY */
+.payment-summary{background:linear-gradient(135deg,#f0f7ff,#e8f2ff);border:1px solid rgba(0,123,255,.2);border-radius:var(--radius-lg);padding:16px;margin:16px 0;}
+.payment-row{display:flex;justify-content:space-between;align-items:center;font-size:.85rem;margin-bottom:10px;}
+.payment-row:last-child{margin-bottom:0;border-top:2px solid var(--primary);padding-top:12px;margin-top:12px;font-weight:700;font-size:1.1rem;}
+.payment-label{color:var(--text-secondary);}
+.payment-value{color:var(--text-primary);font-weight:600;}
+.payment-value.highlight{color:var(--primary);font-size:1.2rem;}
+.payment-value.small{color:var(--text-muted);font-size:.8rem;}
+/* IMAGES */
+.img-drop{border:2px dashed var(--border);border-radius:var(--radius-lg);padding:28px 20px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;background:var(--bg-tertiary);}
+.img-drop:hover,.img-drop.drag-over{border-color:var(--primary);background:var(--primary-dim);}
+.img-drop p{font-size:.82rem;color:var(--text-muted);margin-top:6px;}
+.img-previews{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+.img-thumb{width:76px;height:76px;border-radius:var(--radius);overflow:hidden;position:relative;border:1px solid var(--border);}
+.img-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.img-thumb-del{position:absolute;top:2px;right:2px;background:rgba(0,0,0,.55);color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;}
+/* PREVIEW */
+.preview-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-xl);overflow:hidden;position:sticky;top:80px;}
+.preview-img{width:100%;height:180px;background:var(--bg-tertiary);display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.preview-img img{width:100%;height:100%;object-fit:cover;display:block;}
+.preview-img-ph{display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.72rem;text-transform:uppercase;}
+.preview-body{padding:16px;}
+.preview-cat{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.68rem;font-weight:700;text-transform:uppercase;background:var(--primary-dim);color:var(--primary);margin-bottom:8px;}
+.preview-title{font-family:var(--font-display);font-size:1.1rem;font-weight:600;line-height:1.3;margin-bottom:4px;color:var(--text-primary);}
+.preview-price{font-family:var(--font-display);font-size:1.4rem;font-weight:700;color:var(--primary);margin-bottom:10px;}
+.preview-meta{font-size:.72rem;color:var(--text-muted);padding-top:8px;border-top:1px solid var(--border);}
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 24px;border-radius:var(--radius-lg);font-family:var(--font-body);font-size:.9rem;font-weight:700;border:none;cursor:pointer;transition:all .2s;text-decoration:none;width:100%;}
+.btn-primary{background:var(--primary);color:#fff;box-shadow:0 2px 8px rgba(0,123,255,.25);}
+.btn-primary:hover:not(:disabled){background:var(--primary-hover);transform:translateY(-1px);}
+.btn-primary:disabled{opacity:.6;pointer-events:none;}
+.btn-success{background:var(--secondary);color:#fff;}
+.spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+/* ALERTS */
+.alert-success{background:#f0fdf4;border:1px solid rgba(34,197,94,.3);border-radius:var(--radius-lg);padding:16px;color:#166534;font-size:.85rem;display:none;margin-bottom:16px;}
+.alert-success.show{display:block;}
+.alert-error{background:#fef2f2;border:1px solid rgba(220,38,38,.3);border-radius:var(--radius-lg);padding:16px;color:#991b1b;font-size:.85rem;display:none;margin-bottom:16px;}
+.alert-error.show{display:block;}
+/* TOAST */
+#toastWrap{position:fixed;bottom:20px;right:20px;display:flex;flex-direction:column;gap:8px;z-index:9999;pointer-events:none;}
+.toast{color:#fff;padding:12px 18px;border-radius:10px;font-size:.82rem;font-weight:500;box-shadow:0 4px 16px rgba(0,0,0,.15);animation:sIn .3s ease;max-width:280px;}
+.toast.success{background:#166534;}.toast.error{background:var(--danger);}.toast.info{background:var(--primary);}
+@keyframes sIn{from{opacity:0;transform:translateX(30px);}to{opacity:1;transform:translateX(0);}}
+@media(max-width:720px){.form-grid{grid-template-columns:1fr;}.preview-card{position:static;}.form-row{grid-template-columns:1fr;}.main{padding:20px 14px 60px;}}
+</style>
+  <link rel="stylesheet" href="../css/ut.css">
+  <script src="../js/config.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/navbar.js"></script>
+</head>
+<body>
+  <script>document.addEventListener('DOMContentLoaded',()=>renderNavbar('post',{showLogin:false}));</script>
+
+<!-- Auth wall -->
+<div id="authWall" style="display:none;padding:0 20px;">
+  <div class="auth-wall">
+    <div style="font-size:2.5rem;margin-bottom:14px;">🔒</div>
+    <h2>Sign In Required</h2>
+    <p>You must be signed in to post a listing. Only LUANAR students can sell on UniTrade.</p>
+    <a href="login.html?redirect=post.html" class="btn btn-primary">Sign In to Post</a>
+  </div>
+</div>
+
+<main class="main" id="postMain" style="display:none;">
+  <div class="page-header">
+    <h1 class="page-title">Post an Item</h1>
+    <p class="page-sub">Reach thousands of LUANAR students. Pay the advertising fee and your listing goes live instantly.</p>
+  </div>
+
+  <div class="alert-success" id="successAlert">
+    ✅ Listing published successfully! Redirecting to your listing...
+  </div>
+  
+  <div class="alert-error" id="errorAlert"></div>
+
+  <div class="form-grid">
+    <!-- LEFT: form -->
+    <div>
+      <!-- Item details -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-hicon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg></div>
+          <div><h3>Item Details</h3></div>
+        </div>
+        <div class="card-body">
+          <div class="form-group">
+            <label class="form-label">Title <span class="req">*</span></label>
+            <input type="text" class="form-input" id="title" maxlength="80" required placeholder="e.g. Calculus Textbook 8th Edition" oninput="updatePreview()">
+            <div class="field-error" id="titleErr">Title is required</div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Category <span class="req">*</span></label>
+              <select class="form-select" id="category" required onchange="updatePreview()">
+                <option value="">Select category…</option>
+                <option value="e-ticketing">E-Ticketing</option>
+                <option value="foods">Foods &amp; Snacks</option>
+                <option value="electronics">Electronics</option>
+                <option value="clothing">Clothing &amp; Fashion</option>
+                <option value="textbooks">Textbooks</option>
+                <option value="services">Services</option>
+                <option value="furniture">Furniture &amp; Decor</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Condition <span class="req">*</span></label>
+              <select class="form-select" id="condition" required>
+                <option value="">Select…</option>
+                <option value="new">New</option>
+                <option value="like_new">Like New</option>
+                <option value="good">Good</option>
+                <option value="fair">Fair</option>
+                <option value="poor">Poor</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Description <span class="req">*</span></label>
+            <textarea class="form-textarea" id="description" maxlength="800" required placeholder="Describe the item honestly — condition, features, any defects. No external links allowed."></textarea>
+            <span class="form-hint"><span id="descCount">0</span>/800 characters</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Price (MK) <span class="req">*</span></label>
+            <div class="price-wrap">
+              <span class="price-prefix">MK</span>
+              <input type="number" class="form-input" id="price" required min="100" placeholder="e.g. 50000" oninput="updatePaymentSummary()">
+            </div>
+            <span class="form-hint">Enter price in Malawian Kwacha (MK). Minimum MK 100.</span>
+            <div class="field-error" id="priceErr">Valid price required</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Photos -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-hicon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+          <div><h3>Photos <span style="font-size:.72rem;color:var(--text-muted);font-family:var(--font-body);font-weight:400;">(up to 5, max 50MB each)</span></h3></div>
+        </div>
+        <div class="card-body">
+          <div class="img-drop" id="imgDrop" onclick="document.getElementById('imgInput').click()">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <p>Click to upload photos — real photos only, max 50MB each</p>
+          </div>
+          <input type="file" id="imgInput" hidden multiple accept="image/*" onchange="handleImages(this.files)">
+          <div class="img-previews" id="imgPreviews"></div>
+        </div>
+      </div>
+
+      <!-- AUTOMATIC PAYMENT -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-hicon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div>
+          <div><h3>Pay & Publish Instantly</h3></div>
+        </div>
+        <div class="card-body">
+          <p style="font-size:.82rem;color:var(--text-secondary);margin-bottom:16px;">
+            Pay your advertising fee securely via mobile money. Your listing goes live automatically after payment confirmation.
+          </p>
+          
+          <div class="form-group">
+            <label class="form-label">Your Mobile Number <span class="req">*</span></label>
+            <input type="tel" class="form-input" id="phoneNumber" placeholder="e.g. 088xxxxxxx or 099xxxxxxx" maxlength="10" oninput="formatPhoneNumber(this)">
+            <span class="form-hint">Enter your Mpamba or Airtel number. You'll receive a payment prompt on your phone.</span>
+          </div>
+          
+          <div class="payment-summary" id="paymentSummary">
+            <div class="payment-row">
+              <span class="payment-label">Item Price</span>
+              <span class="payment-value" id="payPrice">MK —</span>
+            </div>
+            <div class="payment-row">
+              <span class="payment-label">Your Advertising Fee</span>
+              <span class="payment-value highlight" id="payYourFee">MK —</span>
+            </div>
+            <div class="payment-row">
+              <span class="payment-label small">Payment Processing (PayChangu)</span>
+              <span class="payment-value small" id="payPaychanguFee">MK —</span>
+            </div>
+            <div class="payment-row">
+              <span class="payment-label">Total to Pay</span>
+              <span class="payment-value highlight" id="payTotal">Enter price above</span>
+            </div>
+          </div>
+          
+          <button class="btn btn-primary" id="payBtn" onclick="initiatePayment()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+            Pay & Publish Now
+          </button>
+          
+          <p style="font-size:.72rem;color:var(--text-muted);margin-top:12px;text-align:center;">
+            🔒 Secured by PayChangu · Listing expires after 30 days · Non-refundable
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: preview -->
+    <div>
+      <div class="preview-card">
+        <div class="preview-img" id="previewImg">
+          <div class="preview-img-ph">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#c8d1dc" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            Photo preview
+          </div>
+        </div>
+        <div class="preview-body">
+          <div class="preview-cat" id="previewCat" style="display:none;"></div>
+          <div class="preview-title" id="previewTitle" style="color:var(--text-muted);font-family:var(--font-body);font-weight:400;font-size:.85rem;">Your listing title will appear here</div>
+          <div class="preview-price" id="previewPrice" style="color:var(--text-muted);">—</div>
+          <div class="preview-meta">Listing expires 30 days after posting</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div id="toastWrap"></div>
+
+<script>
+let imageFiles=[], imageBase64=[];
+
+function getToken(){return localStorage.getItem('token')||'';}
+function authH(){return{'Content-Type':'application/json','Authorization':'Bearer '+getToken()};}
+function showToast(msg,t='info'){
+  const w=document.getElementById('toastWrap');
+  const el=document.createElement('div');
+  el.className='toast '+t;
+  el.textContent=msg;
+  w.appendChild(el);
+  setTimeout(()=>el.remove(),3200);
+}
+function ini(n){return(n||'U').split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();}
+
+/* ── AUTH CHECK ── */
+(function(){
+  if(!getToken()){
+    document.getElementById('authWall').style.display='block';
+  } else {
+    document.getElementById('postMain').style.display='block';
+  }
+})();
+
+/* ── DESCRIPTION COUNTER ── */
+document.getElementById('description').addEventListener('input',function(){
+  document.getElementById('descCount').textContent=this.value.length;
+});
+
+/* ── FEE CALCULATION ── */
+function calculateYourFee(price) {
+  if (price < 10000) return 500;
+  if (price <= 25000) return 1000;
+  if (price <= 55000) return 2000;
+  if (price <= 500000) return 5000;
+  return 10000;
+}
+
+function calculatePaychanguFee(yourFee) {
+  return Math.ceil(yourFee * 0.015) + 700;
+}
+
+function updatePaymentSummary() {
+  const price = parseFloat(document.getElementById('price').value) || 0;
+  const yourFee = calculateYourFee(price);
+  const paychanguFee = calculatePaychanguFee(yourFee);
+  const total = yourFee + paychanguFee;
+  
+  document.getElementById('payPrice').textContent = price > 0 ? 'MK ' + price.toLocaleString() : 'MK —';
+  document.getElementById('payYourFee').textContent = price > 0 ? 'MK ' + yourFee.toLocaleString() : 'MK —';
+  document.getElementById('payPaychanguFee').textContent = price > 0 ? 'MK ' + paychanguFee.toLocaleString() : 'MK —';
+  document.getElementById('payTotal').textContent = price > 0 ? 'MK ' + total.toLocaleString() : 'Enter price above';
+  
+  updatePreview();
+}
+
+function formatPhoneNumber(input) {
+  // Remove non-digits
+  let value = input.value.replace(/\\D/g, '');
+  // Ensure starts with 0
+  if (value.length > 0 && value[0] !== '0') {
+    value = '0' + value;
+  }
+  // Limit to 10 digits
+  if (value.length > 10) {
+    value = value.substring(0, 10);
+  }
+  input.value = value;
+}
+
+/* ── LIVE PREVIEW ── */
+function updatePreview(){
+  const title=document.getElementById('title').value.trim();
+  const cat=document.getElementById('category').value;
+  const price=parseFloat(document.getElementById('price').value)||0;
+  const pt=document.getElementById('previewTitle');
+  if(title){pt.textContent=title;pt.style.color='var(--text-primary)';pt.style.fontFamily="'Cormorant Garamond',Georgia,serif";pt.style.fontWeight='600';pt.style.fontSize='.95rem';}
+  else{pt.textContent='Your listing title will appear here';pt.style.color='var(--text-muted)';pt.style.fontFamily='var(--font-body)';pt.style.fontWeight='400';}
+  const pp=document.getElementById('previewPrice');
+  if(price>0){pp.textContent='MK '+price.toLocaleString();pp.style.color='var(--primary)';}
+  else{pp.textContent='—';pp.style.color='var(--text-muted)';}
+  const pc=document.getElementById('previewCat');
+  if(cat){pc.textContent=cat.charAt(0).toUpperCase()+cat.slice(1);pc.style.display='inline-block';}
+  else{pc.style.display='none';}
+}
+
+/* ── IMAGES ── */
+async function handleImages(files){
+  const remaining=5-imageBase64.length;
+  if(remaining<=0){showToast('Maximum 5 photos allowed','error');return;}
+  const toProcess=[...files].slice(0,remaining);
+  for(const f of toProcess){
+    if(f.size>50*1024*1024){showToast(f.name+' is over 50MB — skipped','error');continue;}
+    const b64=await new Promise(res=>{const rd=new FileReader();rd.onload=e=>res(e.target.result);rd.readAsDataURL(f);});
+    imageBase64.push(b64);
+  }
+  renderPreviews();
+  if(imageBase64.length>0){
+    const wrap=document.getElementById('previewImg');
+    wrap.innerHTML=`<img src="${imageBase64[0]}" alt="preview">`;
+  }
+}
+function renderPreviews(){
+  const wrap=document.getElementById('imgPreviews');
+  wrap.innerHTML=imageBase64.map((b,i)=>`
+    <div class="img-thumb">
+      <img src="${b}" alt="photo ${i+1}">
+      <button class="img-thumb-del" onclick="removeImg(${i})">✕</button>
+    </div>`).join('');
+}
+function removeImg(i){
+  imageBase64.splice(i,1);
+  renderPreviews();
+  if(imageBase64.length===0){
+    document.getElementById('previewImg').innerHTML=`<div class="preview-img-ph"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#c8d1dc" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Photo preview</div>`;
+  } else {
+    document.getElementById('previewImg').innerHTML=`<img src="${imageBase64[0]}" alt="preview">`;
+  }
+}
+
+// Drag and drop
+const drop=document.getElementById('imgDrop');
+drop.addEventListener('dragover',e=>{e.preventDefault();drop.classList.add('drag-over');});
+drop.addEventListener('dragleave',()=>drop.classList.remove('drag-over'));
+drop.addEventListener('drop',e=>{e.preventDefault();drop.classList.remove('drag-over');handleImages(e.dataTransfer.files);});
+
+/* ── PAYMENT & SUBMIT ── */
+async function initiatePayment(){
+  // Validate all fields
+  const title = document.getElementById('title').value.trim();
+  const category = document.getElementById('category').value;
+  const condition = document.getElementById('condition').value;
+  const description = document.getElementById('description').value.trim();
+  const price = parseFloat(document.getElementById('price').value);
+  const phone = document.getElementById('phoneNumber').value.trim();
+  
+  if(!title){showToast('Title is required','error');document.getElementById('title').focus();return;}
+  if(!category){showToast('Please select a category','error');return;}
+  if(!condition){showToast('Please select condition','error');return;}
+  if(!description){showToast('Description is required','error');return;}
+  if(!price || price < 100){showToast('Price must be at least MK 100','error');document.getElementById('price').focus();return;}
+  if(!phone || phone.length < 9){showToast('Please enter a valid phone number','error');document.getElementById('phoneNumber').focus();return;}
+  
+  const btn = document.getElementById('payBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Processing...';
+  
+  // Prepare listing data
+  const listingData = {
+    title: title,
+    category: category,
+    condition: condition,
+    description: description,
+    price: price,
+    phoneNumber: phone,
+    images: imageBase64
+  };
+  
+  try {
+    const res = await fetch(API + '/listings/initiate-payment', {
+      method: 'POST',
+      headers: authH(),
+      body: JSON.stringify(listingData)
+    });
+    
+    const data = await res.json();
+    
+    if (!res.ok) {
+      throw new Error(data.message || 'Payment initiation failed');
+    }
+    
+    // Show success message
+    showToast('Redirecting to secure payment...', 'success');
+    
+    // Redirect to PayChangu checkout
+    if (data.paymentUrl) {
+      window.location.href = data.paymentUrl;
+    } else {
+      throw new Error('Payment URL not received');
+    }
+    
+  } catch (err) {
+    console.error('Payment error:', err);
+    showToast(err.message || 'Could not initiate payment', 'error');
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg> Pay & Publish Now';
+  }
+}
+</script>
+</body>
+</html>'''

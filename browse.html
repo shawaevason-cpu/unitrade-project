@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Browse — UniTrade</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/ut.css">
+<style>
+.filters{background:#fff;border-bottom:1px solid var(--border);padding:12px 20px;display:flex;flex-wrap:nowrap;overflow-x:auto;gap:10px;position:static;z-index:100;scrollbar-width:none;-ms-overflow-style:none;}
+.filters::-webkit-scrollbar{display:none;}
+.fl{font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-m);}
+.fg{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.fs{padding:7px 30px 7px 11px;border:1px solid var(--border);border-radius:var(--r);font-family:var(--font-b);font-size:.82rem;color:var(--text);background:var(--bg-muted) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23007bff' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 9px center;appearance:none;outline:none;cursor:pointer;transition:border-color .2s;}
+.fs:focus{border-color:var(--primary);background-color:#fff;box-shadow:0 0 0 3px rgba(0,123,255,.1);}
+.search-fg{display:flex;align-items:center;background:var(--bg-muted);border:1px solid var(--border);border-radius:var(--r);padding:0 10px;gap:6px;transition:border-color .2s,box-shadow .2s;flex-shrink:0;}
+.search-fg:focus-within{border-color:var(--primary);box-shadow:0 0 0 3px rgba(0,123,255,.1);}
+.search-fg input{border:none;background:transparent;font-family:var(--font-b);font-size:.85rem;outline:none;padding:8px 0;color:var(--text);min-width:160px;}
+.fb{padding:7px 14px;border-radius:var(--r);border:1px solid var(--border);background:var(--bg-muted);color:var(--text-2);font-family:var(--font-b);font-size:.78rem;font-weight:600;cursor:pointer;transition:background .2s;flex-shrink:0;}
+.fb:hover{background:#eef2f7;}
+.rc{margin-left:auto;font-size:.78rem;color:var(--text-m);font-weight:500;flex-shrink:0;}
+.main-wrap{padding:20px 20px 60px;width:100%;max-width:100%;margin:0;flex:1;}
+/* 4-column full-width grid */
+.listings-grid{grid-template-columns:repeat(4,1fr) !important;gap:18px;}
+.listing-card{background:#fff;border:1px solid var(--border);border-radius:0;overflow:hidden;display:flex;flex-direction:column;cursor:pointer;transition:transform .22s,box-shadow .22s;}
+.listing-card:hover{transform:translateY(-3px);box-shadow:0 16px 40px rgba(0,0,0,.08);}
+.listing-card:focus-visible{outline:3px solid rgba(0,123,255,.25);outline-offset:-3px;}
+.card-image{position:relative;overflow:hidden;background:var(--bg-muted);}
+.card-image img{width:100%;height:350px;object-fit:cover;display:block;transition:transform .3s;}
+.card-image:hover img{transform:scale(1.04);}
+.card-body{padding:18px;display:flex;flex-direction:column;gap:8px;}
+.card-title{font-size:1rem;font-weight:700;line-height:1.3;color:var(--text-primary);}
+.card-price{font-size:.95rem;font-weight:700;color:var(--primary);white-space:nowrap;}
+.card-meta{display:flex;align-items:center;justify-content:space-between;font-size:.82rem;color:var(--text-muted);}
+.card-seller{display:flex;align-items:center;gap:10px;}
+.seller-av{width:32px;height:32px;border-radius:50%;background:var(--primary-dim);color:var(--primary);display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800;overflow:hidden;}
+.seller-av img{width:100%;height:100%;object-fit:cover;}
+.skel-card{border-radius:0 !important;}
+.state-box{text-align:center;padding:60px 20px;display:none;}.state-box.show{display:block;}
+.state-icon{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;}
+.state-box h3{font-family:var(--font-d);font-size:1.5rem;font-weight:600;margin-bottom:6px;}
+.state-box p{color:var(--text-2);font-size:.875rem;margin-bottom:24px;}
+footer.simple{background:#fff;border-top:1px solid var(--border);padding:14px 20px;text-align:center;font-size:.75rem;color:var(--text-m);}
+@media(max-width:1024px){.listings-grid{grid-template-columns:repeat(3,1fr) !important;}}
+@media(max-width:640px){.filters{padding:10px 12px;}.main-wrap{padding:16px 12px 80px;}.rc{display:none;}.listings-grid{grid-template-columns:repeat(1,1fr) !important;gap:12px;}}
+</style>
+<script src="../js/config.js"></script>
+<script src="../js/utils.js"></script>
+<script src="../js/navbar.js"></script>
+</head>
+<body>
+<script>document.addEventListener('DOMContentLoaded',()=>renderNavbar('browse',{showLogin:false}));</script>
+
+<div class="filters">
+  <div class="search-fg">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" id="searchInput" placeholder="Search listings…">
+  </div>
+  <div class="fg"><span class="fl">Category</span>
+    <select id="catFilter" class="fs"><option value="">All</option><option value="foods">Foods</option><option value="electronics">Electronics</option><option value="clothing">Clothing</option><option value="services">Services</option><option value="e-ticketing">E-Ticketing 🎫</option><option value="other">Other</option></select>
+  </div>
+  <div class="fg"><span class="fl">Price</span>
+    <select id="priceFilter" class="fs"><option value="">Any</option><option value="0-50000">Under MK 50k</option><option value="50000-100000">MK 50k–100k</option><option value="100000-250000">MK 100k–250k</option><option value="250000+">Over MK 250k</option></select>
+  </div>
+  <div class="fg"><span class="fl">Sort</span>
+    <select id="sortFilter" class="fs"><option value="random">Random</option><option value="latest">Latest</option><option value="cheapest">Cheapest</option><option value="expensive">Most Expensive</option></select>
+  </div>
+  <button type="button" class="fb" onclick="resetFilters()">Reset</button>
+  <span class="rc" id="rc">— listings</span>
+</div>
+
+<div class="main-wrap">
+  <div id="loadingState" class="listings-grid">
+    <div class="skel-card"><div class="skeleton" style="height:220px;"></div><div style="padding:12px;display:flex;flex-direction:column;gap:8px;"><div class="skeleton" style="height:13px;width:70%;"></div><div class="skeleton" style="height:18px;width:40%;"></div><div class="skeleton" style="height:11px;width:55%;"></div></div></div>
+    <div class="skel-card"><div class="skeleton" style="height:220px;"></div><div style="padding:12px;display:flex;flex-direction:column;gap:8px;"><div class="skeleton" style="height:13px;width:70%;"></div><div class="skeleton" style="height:18px;width:40%;"></div><div class="skeleton" style="height:11px;width:55%;"></div></div></div>
+    <div class="skel-card"><div class="skeleton" style="height:220px;"></div><div style="padding:12px;display:flex;flex-direction:column;gap:8px;"><div class="skeleton" style="height:13px;width:70%;"></div><div class="skeleton" style="height:18px;width:40%;"></div><div class="skeleton" style="height:11px;width:55%;"></div></div></div>
+    <div class="skel-card"><div class="skeleton" style="height:220px;"></div><div style="padding:12px;display:flex;flex-direction:column;gap:8px;"><div class="skeleton" style="height:13px;width:70%;"></div><div class="skeleton" style="height:18px;width:40%;"></div><div class="skeleton" style="height:11px;width:55%;"></div></div></div>
+    <div class="skel-card"><div class="skeleton" style="height:220px;"></div><div style="padding:12px;display:flex;flex-direction:column;gap:8px;"><div class="skeleton" style="height:13px;width:70%;"></div><div class="skeleton" style="height:18px;width:40%;"></div><div class="skeleton" style="height:11px;width:55%;"></div></div></div>
+    <div class="skel-card"><div class="skeleton" style="height:220px;"></div><div style="padding:12px;display:flex;flex-direction:column;gap:8px;"><div class="skeleton" style="height:13px;width:70%;"></div><div class="skeleton" style="height:18px;width:40%;"></div><div class="skeleton" style="height:11px;width:55%;"></div></div></div>
+  </div>
+  <div id="browseGrid" class="listings-grid" style="display:none;"></div>
+  <div class="state-box" id="emptyState">
+    <div class="state-icon" style="background:#f0f4ff;"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#007bff" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div>
+    <h3>No listings found</h3><p>Try adjusting filters or be the first to post in this category.</p>
+    <a href="post.html" class="btn btn-primary">+ Post the First Item</a>
+  </div>
+  <div class="state-box" id="errorState">
+    <div class="state-icon" style="background:#fef2f2;"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+    <h3>Could not load listings</h3><p id="errorMsg">Make sure your server is running on port 5000</p>
+    <button class="btn btn-primary" onclick="loadListings()">Try Again</button>
+  </div>
+</div>
+
+<!-- FAB: Post Item (browse page only) -->
+<a href="post.html" class="fab-post" title="Post an Item">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+</a>
+
+<div id="toastWrap"></div>
+
+
+<script>
+let all=[],filtered=[];
+
+// FIX: track last rendered list to prevent unnecessary re-renders
+let _lastRenderedIds='';
+// FIX: stable shuffle seed per page session so cards don't re-shuffle on every filter interaction
+let _shuffleOrder=null;
+
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function ago(iso){if(!iso)return'recently';const m=Math.floor((Date.now()-new Date(iso))/60000);if(m<1)return'just now';if(m<60)return m+'m ago';const h=Math.floor(m/60);if(h<24)return h+'h ago';return Math.floor(h/24)+'d ago';}
+function showToast(msg,t='info'){const w=document.getElementById('toastWrap');const el=document.createElement('div');el.className='toast '+t;el.textContent=msg;w.appendChild(el);setTimeout(()=>el.remove(),3200);}
+function getToken(){return localStorage.getItem('token')||'';}
+function authH(){return{'Content-Type':'application/json','Authorization':'Bearer '+getToken()};}
+
+let _browsePageCurrent=1;
+let _browsePageTotal=1;
+let _browseTotalCount=0;
+
+async function loadListings(page){
+  if(loadListings._running) return;
+  loadListings._running=true;
+  page=page||1;
+  _browsePageCurrent=page;
+  if(page===1) showState('loading');
+  try{
+    const search=document.getElementById('searchInput').value.toLowerCase().trim();
+    const cat=document.getElementById('catFilter').value;
+    const params=new URLSearchParams({page,limit:20});
+    if(search) params.set('search',search);
+    if(cat)    params.set('category',cat);
+    const res=await fetch(API+'/listings?'+params);
+    if(!res.ok)throw new Error('Server '+res.status);
+    const raw=await res.json();
+    const incoming=Array.isArray(raw)?raw:(raw.data||[]);
+    _browsePageTotal=raw.totalPages||1;
+    _browseTotalCount=raw.total||incoming.length;
+    if(page===1){ all=incoming; _shuffleOrder=incoming.map((_,i)=>i).sort(()=>Math.random()-.5); }
+    else { all=[...all,...incoming]; }
+    applyFilters(page===1);
+    // Load more button
+    const lm=document.getElementById('loadMoreBtn');
+    if(lm){ if(page<_browsePageTotal){ lm.style.display='flex'; lm.dataset.next=page+1; }else{ lm.style.display='none'; } }
+  }catch(err){
+    document.getElementById('errorMsg').textContent=err.message.includes('fetch')?'Cannot connect — make sure server is running':err.message;
+    showState('error');
+  }finally{
+    loadListings._running=false;
+  }
+}
+
+function loadMoreListings(){
+  const lm=document.getElementById('loadMoreBtn');
+  if(lm) loadListings(parseInt(lm.dataset.next)||2);
+}
+
+// FIX: stable shuffle using pre-built order, so cards don't move on every filter change
+function stableSort(arr){
+  if(!_shuffleOrder) return arr.slice();
+  const indexed=arr.map(item=>({item,order:_shuffleOrder[all.indexOf(item)]??999}));
+  indexed.sort((a,b)=>a.order-b.order);
+  return indexed.map(x=>x.item);
+}
+
+function applyFilters(isInitial){
+  const search=document.getElementById('searchInput').value.toLowerCase().trim();
+  const cat=document.getElementById('catFilter').value;
+  const price=document.getElementById('priceFilter').value;
+  const sort=document.getElementById('sortFilter').value;
+  // Server handles search+category filtering; client handles price+sort only
+  filtered=all.filter(l=>{
+    if(price){const p=Number(l.price);if(price==='0-50000'&&p>=50000)return false;if(price==='50000-100000'&&(p<50000||p>=100000))return false;if(price==='100000-250000'&&(p<100000||p>=250000))return false;if(price==='250000+'&&p<250000)return false;}
+    return true;
+  });
+  if(sort==='cheapest')filtered.sort((a,b)=>a.price-b.price);
+  else if(sort==='expensive')filtered.sort((a,b)=>b.price-a.price);
+  else if(sort==='latest')filtered.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+  else filtered=stableSort(filtered); // FIX: stable order, not re-shuffle every time
+
+  // FIX: skip full DOM rebuild if same listings in same order
+  const newIds=filtered.map(l=>l.id).join(',');
+  if(!isInitial && newIds===_lastRenderedIds) return;
+  _lastRenderedIds=newIds;
+  renderListings(filtered,isInitial);
+}
+
+function resetFilters(){
+  document.getElementById('searchInput').value='';
+  document.getElementById('catFilter').value='';
+  document.getElementById('priceFilter').value='';
+  document.getElementById('sortFilter').value='random';
+  applyFilters();
+}
+
+// FIX: attach listeners only after DOM is ready, defer to avoid firing during URL pre-fill
+function attachFilterListeners(){
+  ['priceFilter','sortFilter'].forEach(id=>{
+    document.getElementById(id).addEventListener('change',()=>applyFilters(false));
+  });
+  let _searchDebounce;
+  document.getElementById('searchInput').addEventListener('input',()=>{clearTimeout(_searchDebounce);_searchDebounce=setTimeout(()=>{all=[];_shuffleOrder=null;loadListings(1);},400);});
+  document.getElementById('catFilter').addEventListener('change',()=>{all=[];_shuffleOrder=null;loadListings(1);});
+}
+
+const condMap={new:'New',like_new:'Like New',good:'Good',fair:'Fair',poor:'Poor'};
+const user=()=>{try{return JSON.parse(localStorage.getItem('user')||'null');}catch{return null;}};
+
+function renderListings(list,animate){
+  const grid=document.getElementById('browseGrid');
+  grid.innerHTML='';
+  document.getElementById('rc').textContent=(_browseTotalCount||list.length)+' listing'+((_browseTotalCount||list.length)!==1?'s':'');
+  if(list.length===0){showState('empty');return;}
+  showState('listings');
+  const me=user();
+  list.forEach((l,idx)=>{
+    const isOwner=me&&String(l.userId)===String(me.id);
+    const avTxt=(l.sellerName||'?')[0].toUpperCase();
+    const sellerAv = l.sellerAvatar ? `<img src="${l.sellerAvatar}" alt="${esc(l.sellerName||'Seller')}" onerror="this.parentElement.innerHTML='${avTxt}'">` : avTxt;
+    const img=l.images?.length?`<img src="${l.images[0]}" alt="${esc(l.title)}" loading="lazy">`:`<div class="card-image-ph"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#c8d1dc" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>No photo</div>`;
+    const cc='cond-'+(l.condition||'good');
+    const menuId='menu_'+l.id;
+    const ownerMenu=isOwner?`<button class="danger" onclick="deleteListing(${l.id})"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg> Delete</button>`:'';
+
+    const card=document.createElement('div');
+    card.className='listing-card'+(animate?' animate-in':''); card.style.animationDelay=animate?(idx*.04+'s'):'0s'; card.dataset.id=l.id;
+    card.tabIndex=0;
+    card.innerHTML=`
+      <div class="card-image">
+        ${img}
+        <button type="button" class="card-menu-btn" onclick="event.stopPropagation();toggleMenu(event,'${menuId}')" title="More options">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg>
+        </button>
+        <div class="card-dropdown" id="${menuId}">
+          <button type="button" onclick="event.stopPropagation();shareCard(${l.id})"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> Share</button>
+          <button type="button" onclick="event.stopPropagation();saveCard(${l.id},this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg> Save</button>
+          ${ownerMenu}
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">${esc(l.title)}</div>
+        <div class="card-price">MK ${Number(l.price).toLocaleString()}</div>
+        <div class="card-meta">
+          <div class="card-seller">
+            <div class="seller-av">${sellerAv}</div>
+            <span class="seller-name">${esc(l.sellerName||'Seller')}</span>
+          </div>
+          <span class="card-time">${ago(l.createdAt)}</span>
+        </div>
+      </div>`;
+    card.addEventListener('click',()=>window.location.href='listing.html?id='+l.id);
+    card.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();window.location.href='listing.html?id='+l.id;}});
+    grid.appendChild(card);
+  });
+}
+
+function showState(s){
+  document.getElementById('loadingState').style.display=s==='loading'?'grid':'none';
+  document.getElementById('browseGrid').style.display=s==='listings'?'grid':'none';
+  document.getElementById('emptyState').classList.toggle('show',s==='empty');
+  document.getElementById('errorState').classList.toggle('show',s==='error');
+}
+
+function toggleMenu(e,id){
+  e.stopPropagation();
+  document.querySelectorAll('.card-dropdown.open').forEach(d=>{if(d.id!==id)d.classList.remove('open');});
+  document.getElementById(id)?.classList.toggle('open');
+}
+document.addEventListener('click',()=>document.querySelectorAll('.card-dropdown.open').forEach(d=>d.classList.remove('open')));
+
+function waContact(title,price,phone){
+  const msg=encodeURIComponent(`Hi! I'm interested in "${title}" (${price}) on UniTrade. Is it still available?`);
+  window.open(phone?`https://wa.me/${phone.replace(/\D/g,'')}?text=${msg}`:`https://wa.me/?text=${msg}`,'_blank');
+}
+function shareCard(id){const url=window.location.origin+'/listing.html?id='+id;navigator.share?navigator.share({url}):navigator.clipboard.writeText(url).then(()=>showToast('Link copied!','info'));}
+
+async function saveCard(id,btn){
+  if(!getToken()){showToast('Sign in to save listings','info');return;}
+  try{
+    const res=await fetch(API+'/listings/'+id+'/save',{method:'POST',headers:authH()});
+    const data=await res.json();
+    showToast(data.saved?'Saved ✓':'Removed from saved',data.saved?'success':'info');
+  }catch{showToast('Could not save','error');}
+}
+
+async function deleteListing(id){
+  if(!getToken()){showToast('Sign in to manage listings','info');return;}
+  if(!confirm('Delete this listing permanently?'))return;
+  try{
+    const res=await fetch(API+'/listings/'+id,{method:'DELETE',headers:authH()});
+    if(!res.ok)throw new Error();
+    showToast('Deleted','info');
+    all=all.filter(l=>l.id!==id);
+    applyFilters();
+  }catch{showToast('Could not delete','error');}
+}
+
+// FIX: run everything inside DOMContentLoaded so elements exist
+// and URL pre-fill (.value=) cannot accidentally fire change/input events
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',function(){
+    // Pre-fill from URL params FIRST, before attaching listeners
+    const _p=new URLSearchParams(window.location.search);
+    if(_p.get('search'))document.getElementById('searchInput').value=_p.get('search');
+    const _urlCat=_p.get('category');if(_urlCat)document.getElementById('catFilter').value=_urlCat;
+    // Now attach listeners (AFTER pre-fill, so pre-fill can't trigger them)
+    attachFilterListeners();
+    // Then load data
+    loadListings();
+  },{once:true});
+}else{
+  const _p=new URLSearchParams(window.location.search);
+  if(_p.get('search'))document.getElementById('searchInput').value=_p.get('search');
+  const _urlCat=_p.get('category');if(_urlCat)document.getElementById('catFilter').value=_urlCat;
+  attachFilterListeners();
+  loadListings();
+}
+</script>
+</body>
+</html>

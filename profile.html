@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Profile - UniTrade</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--primary:#007bff;--primary-hover:#0056b3;--primary-dim:rgba(0,123,255,.08);--secondary:#28a745;--danger:#dc2626;--bg-page:#f4f6f9;--bg-card:#fff;--bg-tertiary:#f8f9fa;--border:#e2e8f0;--text-primary:#1a1a2e;--text-secondary:#555770;--text-muted:#9ca3af;--radius:8px;--radius-lg:12px;--radius-xl:18px;--font-display:'Cormorant Garamond',Georgia,serif;--font-body:'Syne',system-ui,sans-serif;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg-page);color:var(--text-primary);font-family:var(--font-body);font-size:15px;line-height:1.6;min-height:100vh;}
+.navbar{display:flex;justify-content:space-between;align-items:center;padding:10px 20px;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.1);top:0;z-index:1000;gap:16px;}
+.logo{font-size:22px;font-weight:700;color:#007bff;text-decoration:none;flex-shrink:0;}.logo span{color:#333;}
+.nav-links{display:flex;gap:4px;align-items:center;}
+.nav-link{padding:7px 10px;border-radius:var(--radius);text-decoration:none;color:#555;font-size:.8rem;font-weight:500;transition:background .2s,color .2s;display:flex;align-items:center;gap:4px;}
+.nav-link:hover{background:#f0f0f0;color:#007bff;}
+.nav-link.nav-active{color:#007bff;font-weight:700;background:rgba(0,123,255,.06);}
+.nav-notif{position:relative;}
+.nav-badge{position:absolute;top:-5px;right:-5px;background:var(--danger);color:#fff;border-radius:50%;min-width:16px;height:16px;font-size:.6rem;font-weight:800;display:none;align-items:center;justify-content:center;border:2px solid #fff;padding:0 2px;}
+.nav-av{width:34px;height:34px;border-radius:50%;background:var(--primary-dim);color:var(--primary);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;text-decoration:none;transition:box-shadow .2s,transform .15s;border:2px solid transparent;overflow:hidden;flex-shrink:0;}
+.nav-av:hover{transform:scale(1.08);box-shadow:0 0 0 3px rgba(0,123,255,.2);}
+.nav-av.nav-av-on{border-color:var(--primary);}
+.nav-av img{width:100%;height:100%;object-fit:cover;}
+#toastWrap{position:fixed;bottom:20px;right:20px;display:flex;flex-direction:column;gap:8px;z-index:9999;pointer-events:none;}
+.toast{color:#fff;padding:12px 18px;border-radius:10px;font-size:.82rem;font-weight:500;box-shadow:0 4px 16px rgba(0,0,0,.15);animation:sIn .3s ease;max-width:280px;}
+.toast.success{background:#166534;}.toast.error{background:var(--danger);}.toast.info{background:var(--primary);}
+@keyframes sIn{from{opacity:0;transform:translateX(30px);}to{opacity:1;transform:translateX(0);}}
+@media(max-width:640px){.navbar{flex-wrap:wrap;gap:6px;}.nav-links{gap:2px;}}
+.main{width:100%;padding:32px 20px;overflow-x:hidden;}
+/* auth wall */
+.auth-wall{max-width:380px;margin:80px auto;text-align:center;padding:40px;background:var(--bg-card);border-radius:var(--radius-xl);border:1px solid var(--border);}
+.auth-wall h2{font-family:var(--font-display);font-size:1.8rem;margin-bottom:8px;}
+.auth-wall p{color:var(--text-secondary);margin-bottom:24px;font-size:.9rem;}
+/* profile header */
+.profile-header{display:flex;align-items:center;gap:20px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-xl);padding:24px;margin-bottom:24px;}
+.profile-av{width:72px;height:72px;border-radius:50%;background:var(--primary-dim);color:var(--primary);display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:800;flex-shrink:0;overflow:hidden;border:3px solid rgba(0,123,255,.15);}
+.profile-av img{width:100%;height:100%;object-fit:cover;}
+.profile-info h2{font-family:var(--font-display);font-size:1.5rem;font-weight:600;}
+.profile-info p{font-size:.82rem;color:var(--text-muted);margin-top:2px;}
+.profile-info .joined{font-size:.72rem;color:var(--text-muted);margin-top:4px;}
+.header-actions{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;}
+/* tabs */
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--border);margin-bottom:24px;flex-wrap:wrap;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.tab-btn{padding:8px 12px;border:none;background:none;font-family:var(--font-body);font-size:.8rem;font-weight:600;color:var(--text-secondary);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:color .2s,border-color .2s;white-space:nowrap;flex-shrink:0;}
+.tab-btn:hover{color:var(--primary);}
+.tab-btn.active{color:var(--primary);border-bottom-color:var(--primary);}
+.tab-panel{display:none;width:100%;overflow:hidden;}
+.tab-panel.active{display:block;width:100%;overflow:hidden;}
+/* cards */
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-xl);overflow:hidden;margin-bottom:16px;width:100%;}
+.card-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;}
+.card-header-icon{width:34px;height:34px;border-radius:var(--radius);background:var(--primary-dim);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.card-header h3{font-family:var(--font-display);font-size:1.1rem;font-weight:600;}
+.card-header p{font-size:.75rem;color:var(--text-muted);margin-top:1px;}
+.card-body{padding:24px;}
+/* form */
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.form-group{margin-bottom:18px;}.form-group:last-child{margin-bottom:0;}
+.form-label{display:block;font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-secondary);margin-bottom:6px;}
+.form-input,.form-textarea,.form-select{width:100%;background:var(--bg-tertiary);border:1px solid var(--border);border-radius:var(--radius);color:var(--text-primary);font-family:var(--font-body);font-size:.9rem;padding:11px 14px;transition:border-color .2s,box-shadow .2s,background .2s;outline:none;appearance:none;}
+.form-input:focus,.form-textarea:focus,.form-select:focus{border-color:var(--primary);background:#fff;box-shadow:0 0 0 3px rgba(0,123,255,.1);}
+.form-input:disabled{background:#f0f2f5;color:var(--text-muted);cursor:not-allowed;}
+.form-textarea{resize:vertical;min-height:90px;line-height:1.6;}
+.form-hint{font-size:.72rem;color:var(--text-muted);margin-top:4px;display:block;}
+.form-select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23007bff' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px;cursor:pointer;}
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 20px;border-radius:var(--radius);font-family:var(--font-body);font-size:.8rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border:none;cursor:pointer;transition:all .2s;text-decoration:none;}
+.btn-primary{background:var(--primary);color:#fff;box-shadow:0 2px 8px rgba(0,123,255,.25);}.btn-primary:hover{background:var(--primary-hover);transform:translateY(-1px);}.btn-primary:disabled{opacity:.6;pointer-events:none;}
+.btn-secondary{background:var(--bg-tertiary);color:var(--text-secondary);border:1px solid var(--border);}.btn-secondary:hover{background:#eef2f7;color:var(--text-primary);}
+.btn-danger{background:var(--danger);color:#fff;}.btn-danger:hover{background:#b91c1c;}
+.btn-sm{padding:6px 14px;font-size:.72rem;}
+/* toggle */
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border);}.setting-row:last-child{border-bottom:none;padding-bottom:0;}
+.setting-info h4{font-weight:600;font-size:.88rem;}.setting-info p{font-size:.75rem;color:var(--text-secondary);margin-top:2px;}
+.toggle{position:relative;width:44px;height:24px;background:#d1d5db;border-radius:9999px;cursor:pointer;transition:background .25s;flex-shrink:0;border:none;outline:none;padding:0;}
+.toggle.on{background:var(--primary);}
+.toggle::after{content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;background:#fff;border-radius:50%;transition:left .25s;box-shadow:0 1px 4px rgba(0,0,0,.2);}
+.toggle.on::after{left:23px;}
+/* dashboard stats */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin-bottom:20px;width:100%;}
+.stat-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-xl);padding:18px;text-align:center;}
+.stat-val{font-family:var(--font-display);font-size:2rem;font-weight:700;color:var(--primary);line-height:1;}
+.stat-lbl{font-size:.72rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:.08em;margin-top:4px;}
+.stat-card.green .stat-val{color:var(--secondary);}.stat-card.amber .stat-val{color:#f59e0b;}
+/* table */
+.table-wrap{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-xl);overflow-x:auto;width:100%;max-width:100%;-webkit-overflow-scrolling:touch;}
+table{width:100%;border-collapse:collapse;min-width:600px;}
+th{padding:10px 12px;text-align:left;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted);background:var(--bg-tertiary);border-bottom:1px solid var(--border);white-space:nowrap;}
+tbody{display:table-row-group;width:100%;}
+td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle;font-size:.82rem;white-space:nowrap;}
+tr:last-child td{border-bottom:none;}tr:hover td{background:var(--bg-tertiary);}
+.item-cell{display:flex;align-items:center;gap:8px;min-width:0;}
+.item-thumb{width:40px;height:40px;border-radius:var(--radius);overflow:hidden;background:var(--bg-tertiary);border:1px solid var(--border);flex-shrink:0;}
+.item-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.item-thumb-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:.6rem;}
+.item-name{font-weight:700;font-size:.82rem;color:var(--text-primary);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.item-cat{font-size:.68rem;color:var(--text-muted);text-transform:uppercase;font-weight:600;margin-top:1px;}
+.price-cell{font-family:var(--font-display);font-size:1rem;font-weight:700;color:var(--primary);white-space:nowrap;}
+.s-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:.65rem;font-weight:700;text-transform:uppercase;white-space:nowrap;}
+.s-active{background:#dcfce7;color:#166534;}.s-sold{background:#dbeafe;color:#1d4ed8;}.s-expired{background:#fef9c3;color:#854d0e;}
+.act-btn{padding:4px 9px;border:1px solid var(--border);background:var(--bg-tertiary);border-radius:var(--radius);font-family:var(--font-body);font-size:.7rem;font-weight:700;cursor:pointer;transition:all .2s;text-decoration:none;color:var(--text-secondary);white-space:nowrap;display:inline-block;}
+.act-btn.view{color:var(--primary);border-color:rgba(0,123,255,.25);background:var(--primary-dim);}.act-btn.del{color:var(--danger);border-color:rgba(220,38,38,.25);background:rgba(220,38,38,.05);}
+.act-group{display:flex;gap:4px;flex-wrap:nowrap;align-items:center;}
+/* filter tabs */
+.filter-tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;width:100%;}
+.ftab{padding:7px 16px;border-radius:20px;border:1px solid var(--border);background:var(--bg-tertiary);color:var(--text-secondary);font-family:var(--font-body);font-size:.78rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.ftab:hover{border-color:var(--primary);color:var(--primary);}.ftab.active{background:var(--primary);border-color:var(--primary);color:#fff;}
+/* post fab */
+.post-fab{position:fixed;bottom:28px;right:28px;width:52px;height:52px;border-radius:50%;background:var(--primary);color:#fff;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(0,123,255,.45);display:none;align-items:center;justify-content:center;font-size:1.5rem;font-weight:300;transition:transform .2s,box-shadow .2s;z-index:100;text-decoration:none;}
+.post-fab:hover{transform:scale(1.08) translateY(-2px);box-shadow:0 6px 28px rgba(0,123,255,.5);}
+.post-fab-tooltip{position:fixed;bottom:88px;right:28px;background:#1a1a2e;color:#fff;padding:6px 12px;border-radius:8px;font-size:.75rem;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s;white-space:nowrap;z-index:100;}
+.post-fab:hover~.post-fab-tooltip{opacity:1;}
+/* strength */
+.strength-bar{display:flex;gap:3px;margin-top:6px;width:100%;}.strength-seg{height:3px;flex:1;border-radius:2px;background:var(--border);transition:background .3s;}
+/* danger card */
+.card.danger{border-color:rgba(220,38,38,.3);}.card.danger .card-header{background:#fef2f2;border-bottom-color:rgba(220,38,38,.2);}.card.danger h3{color:var(--danger);}
+/* skeleton */
+.skeleton{background:linear-gradient(90deg,#f0f2f5 25%,#e8eaed 50%,#f0f2f5 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:4px;}
+@keyframes shimmer{from{background-position:200% 0;}to{background-position:-200% 0;}}
+/* avatar upload */
+.av-wrap{position:relative;display:inline-block;}
+.av-big{width:80px;height:80px;border-radius:50%;background:var(--primary-dim);color:var(--primary);display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:800;overflow:hidden;border:3px solid rgba(0,123,255,.15);}
+.av-big img{width:100%;height:100%;object-fit:cover;}
+.av-edit{position:absolute;bottom:0;right:0;width:26px;height:26px;border-radius:50%;background:var(--primary);color:#fff;border:2px solid #fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s;}
+.av-edit:hover{background:var(--primary-hover);}
+.empty-state{text-align:center;padding:60px 20px;width:100%;}
+.empty-state h3{font-family:var(--font-display);font-size:1.5rem;font-weight:600;margin-bottom:8px;}
+.empty-state p{color:var(--text-secondary);font-size:.875rem;margin-bottom:20px;}
+@media(max-width:768px){.main{padding:16px 14px;}.profile-header{flex-direction:column;align-items:flex-start;gap:14px;}.header-actions{margin-left:0;}.form-row{grid-template-columns:1fr;}.stats-row{grid-template-columns:repeat(2,1fr);}.tabs{padding:0;overflow-x:auto;}.table-wrap{overflow-x:auto;max-width:100%;}.item-cell{flex-direction:column;align-items:flex-start;gap:8px;}.listings-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:480px){.tabs{font-size:.72rem;}.tab-btn{padding:6px 10px;font-size:.72rem;}.table-wrap{font-size:.75rem;}.item-name{max-width:120px;}}
+</style>
+  <link rel="stylesheet" href="../css/ut.css">
+  <script src="../js/config.js"></script>
+  <script src="../js/utils.js"></script>
+<script src="../js/navbar.js"></script>
+</head>
+<body>
+  <script>document.addEventListener('DOMContentLoaded',()=>renderNavbar('profile',{showLogin:false}));</script>
+
+
+<div id="authWall" style="display:none;padding:0 20px;">
+  <div class="auth-wall">
+    <div style="font-size:3rem;margin-bottom:16px;">🔒</div>
+    <h2>Sign In Required</h2>
+    <p>You need to be signed in to view your profile and manage listings.</p>
+    <a href="login.html?redirect=profile.html" class="btn btn-primary">Sign In</a>
+    &nbsp;
+    <a href="register.html" class="btn btn-secondary">Create Account</a>
+  </div>
+</div>
+
+<main class="main" id="profileMain" style="display:none;">
+  <!-- Profile header -->
+  <div class="profile-header" id="profileHeader">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+      <div class="av-wrap" id="avWrap">
+        <div class="av-big" id="avEl">—</div>
+        <button class="av-edit" onclick="document.getElementById('avInput').click()" title="Change photo">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        </button>
+        <input type="file" id="avInput" hidden accept="image/*" onchange="handleAvatar(this)">
+      </div>
+      <button id="removePhotoBtn" class="btn btn-danger btn-sm" style="font-size:.68rem;padding:4px 10px;display:none;" onclick="removeAvatar()">🗑 Remove Photo</button>
+    </div>
+    <div class="profile-info">
+      <h2 id="phName">—</h2>
+      <p id="phEmail">—</p>
+      <span class="joined" id="phJoined">Joined —</span>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-secondary btn-sm" onclick="doLogout()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign Out
+      </button>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('listings',this)">My Listings</button>
+    <button class="tab-btn" onclick="switchTab('account',this)">Account</button>
+    <button class="tab-btn" onclick="switchTab('notifications',this)">Notifications</button>
+    <button class="tab-btn" onclick="switchTab('privacy',this)">Privacy</button>
+    <button class="tab-btn" onclick="switchTab('security',this)">Security</button>
+  </div>
+
+  <!-- ─── TAB: MY LISTINGS (dashboard) ─── -->
+  <div class="tab-panel active" id="tab-listings">
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-val" id="dActive">—</div><div class="stat-lbl">Active</div></div>
+      <div class="stat-card green"><div class="stat-val" id="dSold">—</div><div class="stat-lbl">Sold</div></div>
+      <div class="stat-card amber"><div class="stat-val" id="dLikes">—</div><div class="stat-lbl">Total Likes</div></div>
+      <div class="stat-card"><div class="stat-val" id="dCmts">—</div><div class="stat-lbl">Comments</div></div>
+    </div>
+    <div class="filter-tabs">
+      <button class="ftab active" onclick="filterListings('all',this)">All</button>
+      <button class="ftab" onclick="filterListings('active',this)">Active</button>
+      <button class="ftab" onclick="filterListings('sold',this)">Sold</button>
+      <button class="ftab" onclick="filterListings('expired',this)">Expired</button>
+    </div>
+    <div class="table-wrap" id="listingsTable">
+      <table><thead><tr><th>Item</th><th>Price</th><th>Status</th><th>Likes</th><th>Comments</th><th>Posted</th><th>Actions</th></tr></thead>
+      <tbody id="listingsTbody">
+        <tr><td colspan="7" style="padding:40px;text-align:center;color:var(--text-muted);">Loading…</td></tr>
+      </tbody></table>
+    </div>
+    <div class="empty-state" id="listingsEmpty" style="display:none;">
+      <h3>No listings yet</h3>
+      <p>You haven't posted any items yet.</p>
+    </div>
+  </div>
+
+  <!-- ─── TAB: ACCOUNT ─── -->
+  <div class="tab-panel" id="tab-account">
+    <div class="card">
+      <div class="card-header"><div class="card-header-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div><h3>Profile Information</h3><p>Your registered details</p></div></div>
+      <div class="card-body">
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Display Name</label><input type="text" class="form-input" id="pName" disabled></div>
+          <div class="form-group"><label class="form-label">University / Campus</label><input type="text" class="form-input" id="pUni" disabled></div>
+        </div>
+        <div class="form-group"><label class="form-label">Bio</label><textarea class="form-textarea" id="pBio" rows="3"></textarea></div>
+        <div style="display:flex;justify-content:flex-end;margin-top:20px;"><button class="btn btn-primary btn-sm" onclick="saveProfile()">Update Profile</button></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-header-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.56 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div><div><h3>Contact Information</h3><p>How buyers reach you</p></div></div>
+      <div class="card-body">
+        <div class="form-group"><label class="form-label">Email Address</label><input type="email" class="form-input" id="pEmail" disabled><span class="form-hint">Contact support to change email</span></div>
+        <div class="form-group"><label class="form-label">Phone</label><input type="tel" class="form-input" id="pPhone" placeholder="+265 xxx xxx xxx" oninput="markDirty()"></div>
+        <div class="form-group"><label class="form-label">Preferred Meetup Location</label>
+          <select class="form-select" id="pMeetup" onchange="markDirty()">
+            <option value="Library">Library</option><option value="Student Center">Student Center</option><option value="Main Gate">Main Gate</option><option value="Science Block">Science Block</option><option value="Cafeteria">Cafeteria</option><option value="Admin Block">Admin Block</option>
+          </select>
+        </div>
+        <div style="display:flex;justify-content:flex-end;margin-top:20px;"><button class="btn btn-primary btn-sm" style="flex-shrink:0;" id="saveContactBtn" onclick="saveContact()">Update Contact</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── TAB: NOTIFICATIONS ─── -->
+  <div class="tab-panel" id="tab-notifications">
+    <div class="card"><div class="card-header"><div class="card-header-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div><div><h3>Notification Preferences</h3><p>Auto-saved when toggled</p></div></div>
+    <div class="card-body">
+      <div class="setting-row"><div class="setting-info"><h4>New Comments</h4><p>When someone comments on your listing</p></div><button class="toggle" id="tn-newComments" onclick="toggleNotif(this,'newComments')"></button></div>
+      <div class="setting-row"><div class="setting-info"><h4>Listing Likes</h4><p>When someone likes your item</p></div><button class="toggle" id="tn-listingLikes" onclick="toggleNotif(this,'listingLikes')"></button></div>
+      <div class="setting-row"><div class="setting-info"><h4>Price Drops</h4><p>When saved items decrease in price</p></div><button class="toggle" id="tn-priceDrops" onclick="toggleNotif(this,'priceDrops')"></button></div>
+      <div class="setting-row"><div class="setting-info"><h4>Marketing &amp; Promotions</h4><p>Tips, features, promotions</p></div><button class="toggle" id="tn-marketing" onclick="toggleNotif(this,'marketing')"></button></div>
+    </div></div>
+  </div>
+
+  <!-- ─── TAB: PRIVACY ─── -->
+  <div class="tab-panel" id="tab-privacy">
+    <div class="card"><div class="card-header"><div class="card-header-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><div><h3>Profile Visibility</h3><p>Auto-saved when toggled</p></div></div>
+    <div class="card-body">
+      <div class="setting-row"><div class="setting-info"><h4>Public Profile</h4><p>Anyone can view your profile and listings</p></div><button class="toggle" id="tp-publicProfile" onclick="togglePrivacy(this,'publicProfile')"></button></div>
+      <div class="setting-row"><div class="setting-info"><h4>Show Online Status</h4><p>Display when you're active</p></div><button class="toggle" id="tp-showOnline" onclick="togglePrivacy(this,'showOnline')"></button></div>
+      <div class="setting-row"><div class="setting-info"><h4>Show Phone Number</h4><p>Display your WhatsApp on your profile</p></div><button class="toggle" id="tp-showPhone" onclick="togglePrivacy(this,'showPhone')"></button></div>
+    </div></div>
+  </div>
+
+  <!-- ─── TAB: SECURITY ─── -->
+  <div class="tab-panel" id="tab-security">
+    <div class="card"><div class="card-header"><div class="card-header-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><div><h3>Change Password</h3><p>Use a strong unique password</p></div></div>
+    <div class="card-body">
+      <div class="form-group"><label class="form-label">Current Password</label><input type="password" class="form-input" id="sCurPw" placeholder="Enter current password"></div>
+      <div class="form-group"><label class="form-label">New Password</label><input type="password" class="form-input" id="sNewPw" placeholder="Min 6 characters" oninput="checkPwStrength(this.value)">
+        <div class="strength-bar"><div class="strength-seg" id="ps1"></div><div class="strength-seg" id="ps2"></div><div class="strength-seg" id="ps3"></div><div class="strength-seg" id="ps4"></div></div>
+        <div style="font-size:.72rem;margin-top:3px;" id="pwLabel"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Confirm New Password</label><input type="password" class="form-input" id="sConPw" placeholder="Repeat new password"></div>
+      <div style="display:flex;justify-content:flex-end;margin-top:20px;"><button class="btn btn-primary btn-sm" style="flex-shrink:0;" id="changePwBtn" onclick="changePassword()">Update Password</button></div>
+    </div></div>
+    <div class="card danger">
+      <div class="card-header"><div class="card-header-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><div><h3>Danger Zone</h3><p>Permanent and irreversible actions</p></div></div>
+      <div class="card-body">
+        <div class="setting-row" style="align-items:flex-start;gap:16px;">
+          <div class="setting-info"><h4 style="color:var(--danger);">Delete Account</h4><p>Permanently deletes your account and all listings. This cannot be undone.</p></div>
+          <button class="btn btn-danger btn-sm" style="flex-shrink:0;" onclick="deleteAccount()">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div id="toastWrap"></div>
+
+<script>
+let currentUser=null,allMyListings=[],currentFilter='all';
+function getToken(){return localStorage.getItem('token')||'';}
+function authH(){return{'Content-Type':'application/json','Authorization':'Bearer '+getToken()};}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function ago(iso){if(!iso)return'';const m=Math.floor((Date.now()-new Date(iso))/60000);if(m<1)return'just now';if(m<60)return m+'m ago';const h=Math.floor(m/60);if(h<24)return h+'h ago';const d=Math.floor(h/24);return d<30?d+'d ago':new Date(iso).toLocaleDateString();}
+function showToast(msg,t='info'){const w=document.getElementById('toastWrap');const el=document.createElement('div');el.className='toast '+t;el.textContent=msg;w.appendChild(el);setTimeout(()=>el.remove(),3200);}
+function ini(n){return(n||'U').split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();}
+
+async function boot(){
+  const token=getToken();
+  if(!token){document.getElementById('authWall').style.display='block';document.getElementById('profileMain').style.display='none';return;}
+  document.getElementById('profileMain').style.display='block';
+  try{
+    const res=await fetch(API+'/auth/me',{headers:authH()});
+    if(!res.ok)throw new Error('Auth failed: '+res.statusText);
+    currentUser=await res.json();
+    utUtils.setUser(currentUser);
+    populateUI(currentUser);
+    updateNavAvatar(currentUser);
+    console.log('User loaded:',currentUser);
+    await loadMyListings();
+  }catch(e){
+    console.error('Boot error:',e);
+    localStorage.removeItem('token');localStorage.removeItem('user');
+    document.getElementById('authWall').style.display='block';
+    document.getElementById('profileMain').style.display='none';
+    showToast('Session expired. Please sign in again.','error');
+  }
+}
+
+function populateUI(u){
+  // header
+  document.getElementById('phName').textContent=u.name||'—';
+  document.getElementById('phEmail').textContent=u.email||'—';
+  document.getElementById('phJoined').textContent='Joined '+new Date(u.joinedAt).toLocaleDateString('en-GB',{month:'short',year:'numeric'});
+  // avatar - show image if exists, initials fallback, toggle remove button
+  const av=document.getElementById('avEl');
+  const removeBtn=document.getElementById('removePhotoBtn');
+  const iniText = ini(u.name);
+  if(u.avatar){
+    av.innerHTML=`<img src="${u.avatar}" alt="av" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<div style=&quot;width:100%;height:100%;background:linear-gradient(135deg,#007bff,#0056b3);color:#fff;font-size:1.8rem;font-weight:800;display:flex;align-items:center;justify-content:center;&quot;>${iniText}</div>'">`;
+    if(removeBtn) removeBtn.style.display='inline-flex';
+  }else{
+    av.innerHTML=`<div style="width:100%;height:100%;background:linear-gradient(135deg,#007bff,#0056b3);color:#fff;font-size:1.8rem;font-weight:800;display:flex;align-items:center;justify-content:center;">${iniText}</div>`;
+    if(removeBtn) removeBtn.style.display='none';
+  }
+  // account fields
+  document.getElementById('pName').value=u.name||'';
+  document.getElementById('pUni').value=u.university||'';
+  document.getElementById('pBio').value=u.bio||'';
+  document.getElementById('pEmail').value=u.email||'';
+  document.getElementById('pPhone').value=u.phone||'';
+  if(u.meetupLocation)document.getElementById('pMeetup').value=u.meetupLocation;
+  // notification toggles
+  const n=u.notifications||{};
+  ['newComments','listingLikes','priceDrops','marketing'].forEach(k=>{
+    const el=document.getElementById('tn-'+k);if(el){el.classList.toggle('on',!!n[k]);}
+  });
+  // privacy toggles
+  const p=u.privacy||{};
+  ['publicProfile','showOnline','showPhone'].forEach(k=>{
+    const el=document.getElementById('tp-'+k);if(el){el.classList.toggle('on',!!p[k]);}
+  });
+  // update nav avatar
+  const navAvs=document.querySelectorAll('.nav-av span,.nav-av img');
+  if(navAvs.length){/* built by nav_js, already correct */}
+}
+
+function switchTab(name,btn){
+  document.querySelectorAll('.tab-panel').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  btn.classList.add('active');
+}
+
+function markDirty(){/* optional unsaved indicator */}
+
+/* ── Save profile ── */
+async function saveProfile(){
+  const btn=document.querySelector('[onclick="saveProfile()"]');
+  const name=document.getElementById('pName').value.trim();
+  if(!name){showToast('Name cannot be empty','error');return;}
+  if(btn){btn.disabled=true;btn.textContent='Saving…';}
+  try{
+    const res=await fetch(API+'/user/profile',{method:'PUT',headers:authH(),body:JSON.stringify({name,university:document.getElementById('pUni').value.trim(),bio:document.getElementById('pBio').value.trim()})});
+    if(!res.ok)throw new Error((await res.json()).message);
+    const{user}=await res.json();
+    currentUser=user;localStorage.setItem('user',JSON.stringify(user));
+    populateUI(user);showToast('Profile saved ✓','success');
+  }catch(e){showToast(e.message||'Save failed','error');}
+  finally{if(btn){btn.disabled=false;btn.textContent='Update Profile';}}
+}
+async function saveContact(){
+  const btn=document.getElementById('saveContactBtn');
+  btn.disabled=true;btn.textContent='Saving…';
+  try{
+    const res=await fetch(API+'/user/profile',{method:'PUT',headers:authH(),body:JSON.stringify({phone:document.getElementById('pPhone').value.trim(),meetupLocation:document.getElementById('pMeetup').value})});
+    if(!res.ok)throw new Error((await res.json()).message);
+    const{user}=await res.json();
+    currentUser=user;localStorage.setItem('user',JSON.stringify(user));
+    showToast('Contact updated ✓','success');
+  }catch(e){showToast(e.message||'Save failed','error');}
+  finally{btn.disabled=false;btn.textContent='Update Contact';}
+}
+
+/* -- Avatar -- */
+function handleAvatar(inp){
+  if(!inp.files||!inp.files[0])return;
+  const f=inp.files[0];
+  if(f.size>5*1024*1024){showToast('Max 5MB for photo','error');return;}
+  const rd=new FileReader();
+  rd.onload=async(e)=>{
+    const b64=e.target.result;
+    const av=document.getElementById('avEl');
+    av.innerHTML='<img src="'+b64+'" alt="av" style="width:100%;height:100%;object-fit:cover;">';
+    const removeBtn=document.getElementById('removePhotoBtn');
+    if(removeBtn) removeBtn.style.display='inline-flex';
+    try{
+      const res=await fetch(API+'/user/profile',{method:'PUT',headers:authH(),body:JSON.stringify({avatar:b64})});
+      if(!res.ok){
+        let msg='Could not save photo';
+        try{const err=await res.json();msg=err.message||msg;}catch(ignored){}
+        throw new Error(msg);
+      }
+      const data=await res.json();
+      const user=data.user||data;
+      currentUser=user;
+      localStorage.setItem('user',JSON.stringify(user));
+      updateNavAvatar(user);
+      populateUI(user);
+      showToast('Photo updated','success');
+    }catch(err){showToast(err.message||'Could not save photo','error');populateUI(currentUser);}
+  };
+  rd.readAsDataURL(f);
+  inp.value='';
+}
+async function removeAvatar(){
+  if(!confirm('Remove your profile photo?')) return;
+  const removeBtn=document.getElementById('removePhotoBtn');
+  if(removeBtn){removeBtn.disabled=true;removeBtn.textContent='Removing...';}
+  try{
+    const res=await fetch(API+'/user/profile',{method:'PUT',headers:authH(),body:JSON.stringify({avatar:null})});
+    if(!res.ok) throw new Error((await res.json()).message||'Failed');
+    const data=await res.json();
+    const user=data.user||data;
+    currentUser=user;
+    localStorage.setItem('user',JSON.stringify(user));
+    populateUI(user);
+    updateNavAvatar(user);
+    showToast('Photo removed','info');
+  }catch(err){showToast(err.message||'Could not remove photo','error');}
+  finally{if(removeBtn){removeBtn.disabled=false;removeBtn.textContent='Remove Photo';}}
+}
+function updateNavAvatar(u){
+  const iniText=ini(u.name);
+  document.querySelectorAll('.ut-profile-btn').forEach(function(btn){
+    if(u.avatar){btn.innerHTML='<img src="'+u.avatar+'" alt="" style="width:100%;height:100%;object-fit:cover;display:block;">';}
+    else{btn.innerHTML=iniText;}
+  });
+  document.querySelectorAll('.ut-mobile-av').forEach(function(el){
+    if(u.avatar){el.innerHTML='<img src="'+u.avatar+'" alt="" style="width:100%;height:100%;object-fit:cover;">';}
+    else{el.innerHTML=iniText;}
+  });
+}
+
+/* ── Notifications toggle ── */
+async function toggleNotif(el,key){
+  el.classList.toggle('on');const val=el.classList.contains('on');
+  try{const res=await fetch(API+'/user/notifications',{method:'PUT',headers:authH(),body:JSON.stringify({[key]:val})});if(!res.ok)throw new Error();showToast((val?'Enabled':'Disabled')+': '+key.replace(/([A-Z])/g,' $1'),'success');if(currentUser){currentUser.notifications[key]=val;utUtils.setUser(currentUser);}}
+  catch{el.classList.toggle('on');showToast('Could not save','error');}
+}
+async function togglePrivacy(el,key){
+  el.classList.toggle('on');const val=el.classList.contains('on');
+  try{const res=await fetch(API+'/user/privacy',{method:'PUT',headers:authH(),body:JSON.stringify({[key]:val})});if(!res.ok)throw new Error();showToast(key+': '+(val?'on':'off'),'success');if(currentUser){currentUser.privacy[key]=val;utUtils.setUser(currentUser);}}
+  catch{el.classList.toggle('on');showToast('Could not save','error');}
+}
+
+/* ── Password ── */
+async function changePassword(){
+  const cur=document.getElementById('sCurPw').value,nw=document.getElementById('sNewPw').value,con=document.getElementById('sConPw').value;
+  if(!cur||!nw||!con){showToast('Fill all three fields','error');return;}
+  if(nw!==con){showToast('Passwords do not match','error');return;}
+  if(nw.length<6){showToast('Minimum 6 characters','error');return;}
+  const btn=document.getElementById('changePwBtn');btn.disabled=true;btn.textContent='Updating…';
+  try{const res=await fetch(API+'/user/password',{method:'PUT',headers:authH(),body:JSON.stringify({current:cur,newPass:nw})});if(!res.ok)throw new Error((await res.json()).message);document.getElementById('sCurPw').value='';document.getElementById('sNewPw').value='';document.getElementById('sConPw').value='';resetPwStrength();showToast('Password updated ✓','success');}
+  catch(e){showToast(e.message||'Update failed','error');}
+  finally{btn.disabled=false;btn.textContent='Update Password';}
+}
+function checkPwStrength(v){
+  let s=0;if(v.length>=6)s++;if(v.length>=10)s++;if(/[A-Z]/.test(v)&&/[0-9]/.test(v))s++;if(/[^A-Za-z0-9]/.test(v))s++;
+  const colors=['#ef4444','#f59e0b','#3b82f6','#22c55e'],labels=['Too short','Weak','Good','Strong'];
+  ['ps1','ps2','ps3','ps4'].forEach((id,i)=>{document.getElementById(id).style.background=i<s?colors[s-1]:'';}); 
+  const lbl=document.getElementById('pwLabel');lbl.textContent=v.length>0?labels[s-1]||'':'';lbl.style.color=s>0?colors[s-1]:'';
+}
+function resetPwStrength(){['ps1','ps2','ps3','ps4'].forEach(id=>{document.getElementById(id).style.background='';});document.getElementById('pwLabel').textContent='';}
+
+/* ── My Listings ── */
+async function loadMyListings(){
+  try{
+    const res=await fetch(API+'/user/listings',{headers:authH()});
+    if(!res.ok)throw new Error('Failed to load listings - ' + res.statusText);
+    const data=await res.json();
+    allMyListings=Array.isArray(data)?data:(data.listings||[]);
+    updateDashStats();
+    renderListingsTable(currentFilter);
+    if(allMyListings.length===0){showToast('No listings found','info');}
+  }catch(e){
+    console.error('Load listings error:',e);
+    showToast('Could not load listings - please check your connection','error');
+    allMyListings=[];
+    updateDashStats();
+    renderListingsTable(currentFilter);
+  }
+}
+function updateDashStats(){
+  document.getElementById('dActive').textContent=allMyListings.filter(l=>l.status==='active').length;
+  document.getElementById('dSold').textContent=allMyListings.filter(l=>l.status==='sold').length;
+  document.getElementById('dLikes').textContent=allMyListings.reduce((s,l)=>s+(l.likes||0),0);
+  document.getElementById('dCmts').textContent=allMyListings.reduce((s,l)=>s+(l.comments?.length||0),0);
+}
+function filterListings(f,btn){
+  currentFilter=f;
+  document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderListingsTable(f);
+}
+function renderListingsTable(filter){
+  const list=filter==='all'?allMyListings:allMyListings.filter(l=>l.status===filter);
+  const tbody=document.getElementById('listingsTbody'),empty=document.getElementById('listingsEmpty'),wrap=document.getElementById('listingsTable');
+  if(list.length===0){wrap.style.display='none';empty.style.display='block';return;}
+  wrap.style.display='block';empty.style.display='none';
+  const sc={active:'s-active',sold:'s-sold',expired:'s-expired'};
+  const sl={active:'Active',sold:'Sold',expired:'Expired'};
+  tbody.innerHTML=list.map(l=>{
+    const iH=l.images?.length?`<img src="${l.images[0]}" alt="item">`:`<div class="item-thumb-ph"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/></svg></div>`;
+    const s=l.status||'active';
+    return`<tr>
+      <td><div class="item-cell"><div class="item-thumb">${iH}</div><div><div class="item-name">${esc(l.title)}</div><div class="item-cat">${esc(l.category||'Other')}</div></div></div></td>
+      <td><span class="price-cell">MK ${Number(l.price).toLocaleString()}</span></td>
+      <td><span class="s-badge ${sc[s]||'s-active'}">${sl[s]||'Active'}</span></td>
+      <td style="color:#ef4444;font-weight:700;">${l.likes||0}</td>
+      <td style="color:var(--primary);font-weight:700;">${l.comments?.length||0}</td>
+      <td style="font-size:.78rem;color:var(--text-muted);">${ago(l.createdAt)}</td>
+      <td><div class="act-group">
+        <a href="listing.html?id=${l.id}" class="act-btn view">View</a>
+        ${s!=='sold'?`<button class="act-btn" onclick="markSold(${l.id})" style="color:var(--secondary);border-color:rgba(40,167,69,.25);background:rgba(40,167,69,.05);">Sold</button>`:''}
+        <button class="act-btn del" onclick="delListing(${l.id})">Del</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+async function markSold(id){if(!confirm('Mark as sold?'))return;try{const res=await fetch(API+'/listings/'+id,{method:'PUT',headers:authH(),body:JSON.stringify({status:'sold'})});if(!res.ok)throw new Error();showToast('Marked as sold ✓','success');await loadMyListings();}catch{showToast('Could not update','error');}}
+async function delListing(id){if(!confirm('Delete this listing permanently?'))return;try{const res=await fetch(API+'/listings/'+id,{method:'DELETE',headers:authH()});if(!res.ok)throw new Error();showToast('Deleted','info');await loadMyListings();}catch{showToast('Could not delete','error');}}
+
+/* ── Delete account ── */
+async function deleteAccount(){
+  if(!confirm('This permanently deletes your account and ALL listings. Continue?'))return;
+  if(prompt('Type DELETE to confirm:')!=='DELETE'){showToast('Cancelled','info');return;}
+  try{const res=await fetch(API+'/user',{method:'DELETE',headers:authH()});if(!res.ok)throw new Error();localStorage.removeItem('token');localStorage.removeItem('user');showToast('Account deleted. Redirecting…','info');setTimeout(()=>window.location.href='index.html',1800);}
+  catch{showToast('Could not delete account','error');}
+}
+
+/* ── Logout ── */
+async function doLogout(){
+  try{await fetch(API+'/auth/logout',{method:'POST',headers:authH()});}catch{}
+  localStorage.removeItem('token');localStorage.removeItem('user');
+  window.location.href='index.html';
+}
+
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',boot,{once:true});}else{boot();}
+</script>
+</body></html>
